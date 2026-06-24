@@ -1,0 +1,8 @@
+# Keep secrets out of the agent's index and chat context (gitignore keeps them
+# out of git; this keeps them out of the model). Committed policy, not secrets.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/

@@ -1,0 +1,4 @@
+# Aider reads the canonical shared instructions on every run.
+# AGENTS.md is the single source of truth; do not duplicate its body here.
+read:
+  - AGENTS.md

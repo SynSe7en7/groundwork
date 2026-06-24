@@ -1,0 +1,96 @@
+name: ci
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Hard gate: code must typecheck, lint, and build.
+  build:
+    name: typecheck / lint / build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      # Each step no-ops cleanly if the script is absent, so one workflow serves
+      # web, mobile, desktop, and hybrid spawns without edits.
+      - name: Install
+        run: npm ci || npm install
+      - name: Typecheck
+        run: npm run typecheck --if-present
+      - name: Lint
+        run: npm run lint --if-present
+      - name: Build
+        run: npm run build --if-present
+
+  # Advisory gate: tripwires that WARN, never block. They flag two foundation
+  # guardrails for human review and exit 0 by design. Promote a tripwire to a
+  # hard gate only after living with it and a written ADR that says so.
+  tripwires:
+    name: advisory tripwires
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: New top-level dependency without a matching ADR
+        run: |
+          set -uo pipefail
+          BASE="origin/${{ github.base_ref }}"
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}" 2>/dev/null || true
+          if ! git diff --name-only "$BASE"...HEAD | grep -qE '(^|/)(package\.json|pyproject\.toml|Cargo\.toml)$'; then
+            echo "No dependency manifest changed. Skipping."
+            exit 0
+          fi
+          ADR_TOUCHED=$(git diff --name-only "$BASE"...HEAD | grep -E '^docs/adr/.*\.md$' || true)
+          ADDED_DEPS=$(git diff "$BASE"...HEAD -- package.json pyproject.toml Cargo.toml \
+            | grep -E '^\+' | grep -vE '^\+\+\+' \
+            | grep -ihE '"[^"]+":\s*"\^?[0-9~><=]|^\+\s*[a-zA-Z0-9_.-]+\s*=\s*"' || true)
+          if [ -n "$ADDED_DEPS" ] && [ -z "$ADR_TOUCHED" ]; then
+            echo "::warning::New top-level dependency added without a matching ADR in docs/adr/."
+            {
+              echo "### Advisory: new dependency, no ADR"
+              echo "This PR adds a dependency but does not touch docs/adr/. Adding a runtime"
+              echo "dependency is an architecture decision; add an ADR or note why none is needed."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Dependency change has an ADR, or no new dep detected. OK."
+          fi
+          exit 0
+
+      - name: UI surface added before DESIGN.md is locked
+        run: |
+          set -uo pipefail
+          BASE="origin/${{ github.base_ref }}"
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}" 2>/dev/null || true
+          NEW_UI=$(git diff --name-only --diff-filter=A "$BASE"...HEAD \
+            | grep -iE '\.(tsx|jsx|vue|svelte)$|(^|/)(components|app|pages|screens)/' || true)
+          if [ -z "$NEW_UI" ]; then
+            echo "No new UI surface added. Skipping."
+            exit 0
+          fi
+          if [ -f DESIGN.md ] && grep -qiE 'status:\s*(locked|accepted)|<!--\s*design-locked\s*-->' DESIGN.md; then
+            echo "DESIGN.md is locked. UI work is in scope. OK."
+            exit 0
+          fi
+          echo "::warning::UI surface added before DESIGN.md is locked."
+          {
+            echo "### Advisory: UI before DESIGN.md locked"
+            echo "This PR adds UI files, but DESIGN.md is missing or not marked locked/accepted."
+            echo "Lock the design first, or note in the PR why building UI ahead of it is intentional."
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 0

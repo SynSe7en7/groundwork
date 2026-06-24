@@ -1,0 +1,169 @@
+# =============================================================================
+# copier.yml -- groundwork foundation questionnaire
+#
+# One template, four presets (web / mobile / desktop / hybrid). A spawned
+# project materializes its chosen preset; the others are skipped at generation.
+# Comment-heavy on purpose: humans read this every time they spin a project.
+#
+# Conventions (Copier 9.x): choices map label -> value, `when` skips a question,
+# `_exclude` is gitignore-style, `_subdirectory` roots the template, `_envops`
+# overrides the Jinja delimiters.
+# =============================================================================
+
+# --- Engine settings (underscore keys are config, not questions) -------------
+
+_min_copier_version: "9.2.0"
+
+# Template source lives under template/. Keeps the foundation's own meta (this
+# file, the foundation README/CHARTER/CI) OUT of generated projects.
+_subdirectory: template
+
+# Only *.jinja files are rendered through Jinja; everything else is copied
+# byte-for-byte. Primary brace-clash defense: framework config that contains
+# literal {{ }} or ${{ }} (Tailwind, GitHub Actions, Expo, Tauri) is NOT a
+# .jinja file, so Copier never parses its braces.
+_templates_suffix: .jinja
+
+# Answers (including the foundation git tag in _commit) are recorded here in
+# each generated project. `copier update` reads it to 3-way-merge new versions.
+_answers_file: .copier-answers.yml
+
+# Jinja delimiters remapped to square brackets. Secondary brace-clash defense:
+# in a .jinja file, [[ var ]] substitutes and a literal {{ }} passes through
+# untouched (so just's {{env}} and Actions' ${{ }} survive).
+_envops:
+  block_start_string: "[%"
+  block_end_string: "%]"
+  variable_start_string: "[["
+  variable_end_string: "]]"
+  comment_start_string: "[#"
+  comment_end_string: "#]"
+  keep_trailing_newline: true
+
+# Patterns never copied into a generated project (unconditional junk only;
+# preset selection is by conditional directory names, added with the presets).
+_exclude:
+  - "copier.yml"
+  - "~*"
+  - "__pycache__"
+  - "*.py[co]"
+  - ".DS_Store"
+  - ".git"
+  - ".env"
+  - ".env.local"
+  - ".venv"
+  - "node_modules"
+
+# -------------------------------------------------------------------------
+# QUESTIONNAIRE
+# -------------------------------------------------------------------------
+
+project_name:
+  type: str
+  help: "Human-readable project name (Title Case, spaces allowed), e.g. 'Acre Ledger'."
+  default: "My Project"
+
+project_slug:
+  type: str
+  help: "Machine name: lowercase, hyphens, no spaces. Used for repo, package, deploy slugs."
+  default: "[[ project_name | lower | replace(' ', '-') | replace('_', '-') ]]"
+
+project_description:
+  type: str
+  help: "One-line description. Goes in package metadata and the generated README."
+  default: ""
+
+project_type:
+  type: str
+  help: "Which application surface? Selects exactly one preset to materialize."
+  choices:
+    "Web (Next.js 16 App Router + TS + Tailwind)": web
+    "Mobile (Expo / React Native + Expo Router; web-capable via RNW)": mobile
+    "Desktop (Tauri 2 + web frontend in the system webview)": desktop
+    "Hybrid (Turborepo: Expo + Next.js sharing UI via Tamagui/Solito)": hybrid
+  default: web
+
+# Supabase is the shared backbone for every preset. Asked, not assumed, but on.
+use_supabase:
+  type: bool
+  help: "Provision the Supabase backbone (Postgres + Auth + RLS + Storage + one migration set)?"
+  default: true
+
+# Vercel hosts any web surface. Skipped for mobile-only.
+use_vercel:
+  type: bool
+  help: "Host the web surface on Vercel?"
+  default: true
+  when: "[[ project_type in ['web', 'desktop', 'hybrid'] ]]"
+
+# Modal is the GPU/Python/async escape hatch, off the hot path. Off by default.
+use_modal:
+  type: bool
+  help: "Add the Modal escape hatch for GPU/Python/async heavy compute (off the hot path)?"
+  default: false
+
+has_ui:
+  type: bool
+  help: "Scaffold a UI shell (design tokens, app layout, env-badge component)?"
+  default: true
+
+# Mobile: serve a companion website from the same Expo codebase via RNW.
+target_web:
+  type: bool
+  help: "Mobile: build a companion web surface from the same codebase (Expo + React Native Web)?"
+  default: true
+  when: "[[ project_type == 'mobile' ]]"
+
+# Mobile: add a separate thin Next.js site for SEO that must scale.
+marketing_site:
+  type: bool
+  help: "Mobile: add a separate thin Next.js marketing/SEO site alongside the app?"
+  default: false
+  when: "[[ project_type == 'mobile' ]]"
+
+include_two_env_discipline:
+  type: bool
+  help: "Include the two-environment (develop/prod) discipline + promotion checklist?"
+  default: true
+
+author:
+  type: str
+  help: "Author / owner name for package metadata and LICENSE."
+  default: ""
+
+author_email:
+  type: str
+  help: "Author email for package metadata."
+  default: ""
+
+license:
+  type: str
+  help: "License for the generated project (reset from any forked source license)."
+  choices:
+    "Proprietary (no OSS license file)": Proprietary
+    "MIT": MIT
+    "Apache-2.0": Apache-2.0
+    "BUSL-1.1 (source-available)": BUSL-1.1
+  default: Proprietary
+
+# -------------------------------------------------------------------------
+# POST-GENERATION (runs after copy AND update; --trust required to run)
+# -------------------------------------------------------------------------
+_tasks:
+  - command: "git init -q && git add -A"
+    when: "[[ _copier_operation == 'copy' ]]"
+  - command: "git commit -q -m 'chore: scaffold from groundwork [[ _copier_answers._commit | default('untagged') ]]'"
+    when: "[[ _copier_operation == 'copy' ]]"
+
+_message_after_copy: |
+  Project "[[ project_name ]]" scaffolded as a [[ project_type ]] preset.
+
+  Next:
+    cd [[ _copier_conf.dst_path ]]
+    cat AGENTS.md          # canonical agent + contributor rules
+    cat CHARTER.md         # fill in the Charter gate before other work
+    cat docs/GATES.md      # the alignment gates and their state
+    just                   # list available targets (needs `just`)
+
+  Pull future foundation updates with:
+    just foundation-update

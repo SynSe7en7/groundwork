@@ -1,0 +1,66 @@
+# Secrets -- NEVER commit. Real values live only in your shell / Vercel /
+# Supabase / Modal dashboards. .env.example IS tracked (placeholders only).
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+**/secrets/
+
+# Agent hygiene (tool-local, per-developer; never shared). The committed,
+# tracked counterparts are .claude/settings.json, CLAUDE.md, .gemini/settings.json,
+# .aider.conf.yml, and .cursor/rules/.
+.claude/settings.local.json
+.claude/*.local.json
+.gemini/oauth_creds.json
+.aider*
+!.aider.conf.yml
+.cursor/mcp.json
+.windsurf/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Node / Next.js / Vercel
+node_modules/
+.next/
+out/
+dist/
+.turbo/
+.vercel/
+
+# Mobile (Expo / EAS)
+.expo/
+*.jks
+*.keystore
+*.mobileprovision
+ios/Pods/
+
+# Desktop (Tauri)
+src-tauri/target/
+
+# Supabase local stack
+supabase/.temp/
+supabase/.branches/
+
+# Local data + caches
+.cache/
+tmp/
+*.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Tracked on purpose (do NOT ignore):
+# .copier-answers.yml -> pins the foundation tag; copier update needs it.

@@ -1,0 +1,33 @@
+---
+description: Foundation pointer + scoped-override sample. Shared rules live in AGENTS.md.
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# Foundation rules live in AGENTS.md
+
+Cursor reads `AGENTS.md` at the repo root natively. The full project body
+(guardrails, environments, voice rules, stack defaults) is THERE and is not
+repeated here. Read `AGENTS.md` first.
+
+This file exists only to show the one thing a Cursor `.mdc` rule adds over the
+cross-tool standard: a path-scoped override. Use a separate, narrowly scoped
+`.mdc` file (its own `globs`) when a subtree needs an extra rule that does not
+belong in the global body. Do not copy the shared body into any `.mdc` file.
+
+## Scoped-override sample (delete or adapt; illustrative only)
+
+A real scoped rule would live in its own file such as
+`.cursor/rules/20-migrations.mdc` with `alwaysApply: false` and `globs` limited
+to the relevant subtree, so it loads only when those files are in context:
+
+    ---
+    description: Supabase migration files are append-only.
+    globs:
+      - "supabase/migrations/**"
+    alwaysApply: false
+    ---
+    Migrations are append-only. Never edit a migration that has run against any
+    shared environment; add a new timestamped migration instead. One migration
+    set serves every environment. See AGENTS.md.

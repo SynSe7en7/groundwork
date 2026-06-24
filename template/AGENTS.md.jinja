@@ -1,0 +1,133 @@
+# AGENTS.md
+
+This is the canonical, tool-neutral instruction file for [[ project_name ]]. Every
+coding agent (Codex, Cursor, Copilot, Windsurf, Zed, Aider, Claude Code, Gemini
+CLI, and the rest) reads this file natively or through a one-line bridge. It is
+the spine of how work happens here. Read it at the start of every session.
+
+This project was generated from the groundwork foundation (pinned in
+`.copier-answers.yml`). Re-pull guardrail updates with `just foundation-update`.
+
+## Project overview
+
+[[ project_description ]]
+
+- Type: [[ project_type ]] (web / mobile / desktop / hybrid)
+- Stack: Supabase is the backbone (Postgres, Auth, RLS, Storage, Edge Functions,
+  one migration set). Vercel hosts web surfaces. Modal is the escape hatch for
+  GPU, heavy Python, or async compute only, called over HTTPS, writing results
+  back to Supabase, never in the hot CRUD or auth path.
+- Environments: `prod` and `develop`, parameterized purely by env var. See
+  `docs/ENVIRONMENTS.md`.
+
+## Commands
+
+Fill these in for this project and keep them current; agents run them verbatim.
+
+- Install: `<install command>`
+- Dev: `<dev command>`
+- Build: `<build command>`
+- Test: `<test command>`
+- Lint / format: `<lint command>`
+- Deploy: see `docs/DEPLOY.md` (ordered runbook; do not improvise the order)
+
+## Alignment gates (read this first, every session)
+
+Durable decisions are ratified in committed docs before the work that depends on
+them. The gate docs are the substrate; this section is the trigger logic that
+keeps code from getting ahead of its decision.
+
+Session start: read `docs/GATES.md` and `CHARTER.md`. `docs/GATES.md` is the
+index of every gate, its status (not-started / open / ratified / superseded), and
+where its detail lives. `CHARTER.md` is the project's purpose and hard
+boundaries. If either is missing or stale against the code you are about to
+touch, say so before proceeding.
+
+Before an activity, confirm its gate is ratified. If it is not, stop. Do not
+improvise the decision in code. In order of preference: ask the user; or, if
+asked to proceed, write the gate doc, set its status to open in `docs/GATES.md`,
+and get it ratified before merging the dependent work.
+
+| Before you do this | This gate must be ratified | Where it lives |
+|---|---|---|
+| Add or swap a framework, datastore, host, or major dependency | Stack / Architecture ADR | `docs/adr/NNNN-*.md` |
+| Build any non-trivial feature | PRD / Plan gate | `docs/prd/`, `docs/plan/` |
+| Build or change a user-facing surface | DESIGN.md locked | `DESIGN.md` |
+| Deploy, add or rotate a secret, or handle real user data | Deployment & Security gate | `docs/SECURITY_CHECKLIST.md`, `docs/DEPLOY.md` |
+
+Triviality exemption. Gates protect decisions, not keystrokes. You do not need a
+gate for typo and copy fixes, comment edits, dependency-free bug fixes that do
+not change a contract, formatting cleanup, tests for existing behavior, or
+reversible tweaks fully inside an already-ratified plan. When unsure whether
+something is trivial, it is not: ask or open the gate. A change that adds a
+dependency, alters a schema or API contract, touches auth, moves data, or shapes
+what a user sees is never trivial.
+
+## Durable memory lives in committed docs
+
+Decisions and volatile state belong in version control where every tool and
+teammate can read them, not in any single vendor's memory store.
+
+- `CHARTER.md` — why this project exists and its non-goals.
+- `docs/adr/` — architecture decision records. One ratified decision per file,
+  append-only; supersede, never silently rewrite.
+- `DECISIONS.md` — running log of smaller ratified calls.
+- `docs/GATES.md` — the gate index above.
+- `docs/plan/*.md` — tiered plans carrying root cause, file:line, and an effort
+  or Now/Next/Later tier.
+- `docs/HANDOFF.md` — one dated, superseding snapshot of current volatile state
+  (live URLs, in-flight branches, next work). A new handoff replaces the old one.
+
+Any agent-specific memory (Claude auto-memory, Cursor rules) is a thin pointer to
+these committed docs, never the source of truth. If a decision exists only in a
+vendor memory file, it is not ratified. Write it down here.
+
+## Guardrails
+
+Non-negotiable unless a ratified gate says otherwise.
+
+- Branch and PR discipline. Never commit directly to a shared branch (`main`,
+  `develop`). Work on a feature branch and open a PR. Never force-push a shared
+  branch. Commit or push only when the user asks.
+- Frozen-environment isolation. When one stack is declared frozen (a shipped
+  release, a demo baseline, prod), never redeploy, migrate, or mutate it. All new
+  work runs on the development stack, which must be incapable of clobbering the
+  frozen one.
+- Two-environment discipline. Stacks are parallel and parameterized purely by env
+  var: separate compute, isolated data, separate secrets. Each self-identifies
+  via `/api/health` returning app_env, version, git_sha; the UI shows an
+  environment badge whenever app_env is not `prod`. Prod stays badge-free.
+- Promotion is gated by a written checklist. Promote a stack to present-from or
+  ship only after it passes the committed end-to-end checklist twice in a row.
+- Triage findings as Now / Next / Later by P0-P3. Now blocks merge. Next is
+  tracked near-term. Later is pre-GA polish. Record each with root cause and
+  file:line.
+- Write down accepted risks. A known risk being accepted for now is recorded with
+  its reason and deferral tier. An undocumented accepted risk is just a bug.
+- Config in two places stays in sync. When a value is duplicated between a
+  datastore and code, changing it durably means editing both. Note the pairing.
+- Secrets are env-driven placeholders, never real values. No real key, token, or
+  connection string is ever committed, in any doc, script, or example.
+  `.env.example` carries empty placeholders. Never blind-overwrite a secret
+  bundle (a --force create replaces the whole secret); edit single fields through
+  the host dashboard.
+- Generalize only against real instances. Do not build abstraction or config for
+  a hypothetical future case. Every generalization must be demanded by at least
+  two real, existing instances. When you reach for a plugin system or a config
+  layer "for later," stop and write it on the refusal list instead.
+
+## Deploy runbook discipline
+
+Bring a stack up in dependency order, never improvised: datastore schema and
+migrations first, compute and its secrets next, and the frontend's env pointed at
+the live backend URL last. The full runbook and a troubleshooting catalog live in
+`docs/DEPLOY.md`. When a deploy fails, read the actual error body (curl the
+endpoint, read the host log) before forming a hypothesis.
+
+## Voice and style for all prose
+
+- No em-dashes and no double hyphens.
+- No emojis.
+- Never the negation-setup pattern ("that's not X, it's Y").
+- Plain, low-jargon, non-dramatic, non-sycophantic. Assume the reader has context.
+- Commit messages: imperative, scoped, honest about what changed.

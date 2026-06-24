@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    name: render presets
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [web, mobile, desktop, hybrid]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Render ${{ matrix.preset }}
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          uvx copier copy --defaults \
+            --data project_type=${{ matrix.preset }} \
+            --data project_name="CI ${{ matrix.preset }}" \
+            . "$out"
+          test -f "$out/AGENTS.md"      || { echo "AGENTS.md missing";   exit 1; }
+          test -f "$out/docs/GATES.md"  || { echo "docs/GATES.md missing"; exit 1; }
+          test -f "$out/.copier-answers.yml" || { echo "answers file missing"; exit 1; }
+          echo "Rendered ${{ matrix.preset }} OK"

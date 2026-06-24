@@ -1,0 +1,74 @@
+# justfile for [[ project_name ]]. Run `just` with no args to list targets.
+# uvx means no global Python or Copier install is needed.
+# Copier resolves its conditionals and substitutions at scaffold time; just's own
+# {{var}} interpolation is left untouched.
+
+default:
+    @just --list
+
+# --- Foundation lifecycle ----------------------------------------------------
+
+# Pull the latest foundation release in via Copier's 3-way merge (clean tree).
+foundation-update:
+    @git diff --quiet || { echo "Commit or stash changes first (clean tree required)."; exit 1; }
+    uvx copier update --trust --skip-answered
+    @echo "Merged. Resolve any conflict markers or *.rej, then run: just verify"
+
+# Re-prompt every question (for example, to enable a newly added toggle).
+foundation-update-interactive:
+    @git diff --quiet || { echo "Commit or stash changes first."; exit 1; }
+    uvx copier update --trust
+
+# Pin to a specific foundation version instead of the latest tag.
+foundation-update-to version:
+    uvx copier update --trust --skip-answered --vcs-ref {{version}}
+
+# Forcibly re-baseline from current answers (overwrites template-owned files).
+foundation-recopy:
+    uvx copier recopy --trust
+
+# --- Verify (run before every commit and after every update) -----------------
+
+verify: lint typecheck test
+    @echo "verify: OK"
+
+[% if project_type in ['web', 'desktop', 'hybrid'] %]
+lint:
+    npm run lint
+
+typecheck:
+    npm run typecheck
+
+test:
+    npm test
+[% else %]
+lint:
+    npx expo lint
+
+typecheck:
+    npx tsc --noEmit
+
+test:
+    npm test
+[% endif %]
+
+# --- Health: env self-identification (app_env / version / git_sha) -----------
+
+health env="develop":
+    @echo "Checking {{env}} health (set API_BASE_URL to the {{env}} backend first)..."
+    @curl -fsS "${API_BASE_URL:?set API_BASE_URL}/api/health" | (command -v jq >/dev/null && jq . || cat)
+
+# --- Deploy: ordered bring-up. Fill in real commands; keep the order. ---------
+
+deploy env="develop":
+    @echo "Ordered deploy for {{env}}:"
+    @echo "  1) DB migrations first      (e.g. supabase db push)"
+    @echo "  2) compute + secret next    (e.g. modal deploy), off the hot path"
+    @echo "  3) web env -> live backend URL, then build/deploy LAST"
+    @echo "Then run: just health {{env}}"
+
+[% if include_two_env_discipline %]
+# Promotion to prod is gated by docs/ENVIRONMENTS.md (must pass E2E twice).
+promote:
+    @echo "Promotion is gated by docs/ENVIRONMENTS.md (twice-passing E2E). Intentionally manual."
+[% endif %]

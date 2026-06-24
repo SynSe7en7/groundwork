@@ -1,0 +1,15 @@
+---
+title: Decisions
+updated: 2026-06-23
+---
+
+# Decisions
+
+Running log of ratified calls on the foundation itself that do not warrant a full ADR. Architecture decisions live in `docs/adr/`.
+
+- 2026-06-23: Name is `groundwork`, hosted private under the personal GitHub account SynSe7en7.
+- 2026-06-23: Copier is the scaffold and update engine; the repo is also a GitHub template for zero-install spins. Chosen for Copier's 3-way `copier update` drift resolution.
+- 2026-06-23: `AGENTS.md` is the canonical instruction file; Claude Code, Gemini CLI, and Aider are bridged by committed pointer files, not symlinks (Windows-safe).
+- 2026-06-23: Four presets in v1 (web, mobile, desktop, hybrid). Web defaults to Next.js 16. Spawned projects default to a Proprietary license.
+- 2026-06-23: The mobile preset is web-capable from one codebase via Expo + React Native Web + Tamagui, with a `marketing_site` toggle for when SEO must scale. The hybrid preset is the escalation for a first-class shared web-and-native surface.
+- 2026-06-23: Jinja delimiters are remapped to square brackets (`[[ ]]` and `[% %]`) and only `.jinja` files are rendered, so framework braces (`{{ }}`, `${{ }}`) and just's `{{var}}` survive untouched.

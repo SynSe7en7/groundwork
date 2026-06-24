@@ -1,0 +1,22 @@
+# [[ project_name ]]
+
+[[ project_description ]]
+
+Generated from the groundwork foundation. Read `AGENTS.md` for how work happens
+here, and `docs/GATES.md` for the alignment gates and their state.
+
+## Getting started
+
+1. Fill in `CHARTER.md` (the upfront gate) before other work.
+2. Fill the command placeholders in `AGENTS.md`.
+3. Copy `.env.example` to `.env` and set real values (never commit `.env`).
+4. `just` lists the available tasks.
+
+## Foundation updates
+
+```
+just foundation-update
+```
+
+Pulls the latest groundwork release in via Copier's 3-way merge. Requires a
+clean working tree.
