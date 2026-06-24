@@ -22,11 +22,18 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
+      - name: Configure git (Copier post-copy tasks run git init + commit)
+        run: |
+          git config --global user.email "ci@groundwork.local"
+          git config --global user.name "groundwork CI"
+
       - name: Render ${{ matrix.preset }}
         run: |
           set -euo pipefail
           out="$(mktemp -d)"
-          uvx copier copy --defaults \
+          # --trust is required because the template declares _tasks (git init).
+          # --vcs-ref HEAD renders the checked-out commit (no release tag needed).
+          uvx copier copy --defaults --trust --vcs-ref HEAD \
             --data project_type=${{ matrix.preset }} \
             --data project_name="CI ${{ matrix.preset }}" \
             . "$out"
