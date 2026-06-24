@@ -25,6 +25,17 @@ Runs the questionnaire, materializes one preset, writes `.copier-answers.yml` pi
 
 Use the green "Use this template" button. No Copier or Python needed, but the project is not wired for updates. To adopt updates later, run `uvx copier copy --trust gh:SynSe7en7/groundwork .` over the checkout once to generate the answers file, then commit it.
 
+### Existing project (governance overlay)
+
+Add the governance layer (AGENTS.md, the alignment gates, the committed-decision docs, hygiene, CI) to a repo you already have, without touching app code:
+
+```
+cd /path/to/your/repo
+uvx copier copy --trust --data project_type=core gh:SynSe7en7/groundwork .
+```
+
+Existing files are never overwritten, and no commit is made. See [INSTALL.md](INSTALL.md) for the full guide, including a block an AI coding agent can run verbatim.
+
 ## Update the foundation in a project
 
 ```

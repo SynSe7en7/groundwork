@@ -1,0 +1,34 @@
+# [[ project_name ]]
+
+[[ project_description ]]
+
+Next.js 16 (App Router) with TypeScript and Tailwind CSS v4, deployed on Vercel.
+
+## Develop
+
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:3000.
+
+## Environment
+
+Copy the repository-level `.env.example` to `.env.local` and fill in the values.
+The app reads:
+
+- `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` for the
+  browser and server Supabase clients. Both respect Row Level Security.
+- A `sb_secret_*` key only when a server route must bypass RLS. Keep it out of
+  any `NEXT_PUBLIC_` variable.
+- `MODAL_ENDPOINT_URL`, `MODAL_TOKEN`, and `MODAL_CALLBACK_TOKEN` when the Modal
+  compute seam is enabled.
+
+## Layout
+
+- `app/` holds routes, the root layout, and API route handlers.
+- `lib/supabase/` wires the browser client, the cookie-bound server client, and
+  the middleware session refresh.
+- `middleware.ts` refreshes the auth session on every matched request.
+- `app/api/health` returns the environment, version, and commit for quick checks.

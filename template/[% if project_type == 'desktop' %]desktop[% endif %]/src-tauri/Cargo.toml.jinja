@@ -1,0 +1,37 @@
+[package]
+name = "[[ project_slug ]]"
+version = "0.1.0"
+description = "[[ project_description ]]"
+authors = ["[[ author ]]"]
+edition = "2021"
+# Tauri 2 requires a recent Rust. Pin the floor so CI and contributors match.
+rust-version = "1.77.2"
+
+[lib]
+# The mobile/desktop shared entrypoint lives in lib.rs; main.rs is a thin shim.
+name = "app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Updater: self-update from GitHub Releases. Endpoint + pubkey are in
+# tauri.conf.json. Desktop only (the cfg keeps mobile builds clean).
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-updater = "2"
+tauri-plugin-deep-link = "2"
+
+# Optional local SQLite via sqlx. Opt-in: uncomment here, in src/lib.rs, and in
+# capabilities/default.json to enable an on-device cache/store.
+# tauri-plugin-sql = { version = "2", features = ["sqlite"] }
+
+[features]
+# Default to release-grade panic behavior in production builds.
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

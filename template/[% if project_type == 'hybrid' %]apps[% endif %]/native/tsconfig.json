@@ -1,0 +1,11 @@
+{
+  "extends": "@PROJECT_SLUG_PLACEHOLDER/config/tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "paths": {
+      "@PROJECT_SLUG_PLACEHOLDER/*": ["../../packages/*/src"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  "exclude": ["node_modules"]
+}
