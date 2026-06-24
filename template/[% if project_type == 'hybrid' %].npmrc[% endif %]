@@ -1,0 +1,6 @@
+# React Native + pnpm need a flat node_modules so Metro can resolve
+# hoisted dependencies. Do not change this without a Metro resolver config.
+node-linker=hoisted
+shamefully-hoist=true
+strict-peer-dependencies=false
+auto-install-peers=true

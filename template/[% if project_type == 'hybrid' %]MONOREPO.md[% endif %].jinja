@@ -1,0 +1,63 @@
+# [[ project_name ]]
+
+[[ project_description ]]
+
+A Turborepo monorepo (pnpm workspaces) sharing one UI and one Supabase backend
+across web and native:
+
+- `apps/web` — Next.js 16 (App Router, Turbopack), deploys to Vercel.
+- `apps/native` — Expo (SDK 54, expo-router v6), ships through EAS.
+- `packages/app` — shared screens, with navigation via Solito v5.
+- `packages/ui` — Tamagui design system (shared components, tokens, themes).
+- `packages/api` — Supabase client factory and the heavy-compute (Modal) seam.
+- `packages/types` — generated Supabase types plus shared domain types.
+- `packages/config` — base tsconfig and shared config.
+
+## Getting started
+
+```bash
+pnpm install
+pnpm --filter web dev      # Next.js on http://localhost:3000
+pnpm --filter native start # Expo dev server
+```
+
+`pnpm dev` runs every app through Turborepo at once; in day-to-day work you
+usually target one app with `--filter`.
+
+## Environment
+
+Copy the top-level `.env.example` to `.env` and fill in the Supabase values.
+Client-safe keys use the `sb_publishable_*` family and are exposed through
+`NEXT_PUBLIC_*` (web) and `EXPO_PUBLIC_*` (native). The `sb_secret_*` key is
+server-only and never reaches a client bundle.
+
+## Supabase types
+
+Regenerate `packages/types/database.ts` from your project schema with the
+Supabase CLI:
+
+```bash
+supabase gen types typescript --linked > packages/types/database.ts
+```
+
+## Heavy compute (Modal)
+
+`packages/api/heavy-compute.ts` is the seam for long-running or GPU work. It
+calls a Supabase Edge Function wrapper (preferred) or a direct HTTPS Modal
+endpoint. It stays off the hot CRUD and auth path and never holds a secret key.
+
+## Native build
+
+The native binary needs the EAS cloud toolchain (`eas build`, configured in
+`apps/native/eas.json`) or a local Xcode / Android SDK. A plain container can
+build and run the web app but cannot produce a native binary.
+
+## Lighter alternative: Next.js export + Capacitor
+
+If the mobile surface is essentially the web UI in a shell, you can drop Expo
+and EAS entirely: build the web app as a static export (`next build` with
+`output: 'export'`) and wrap it with Capacitor for iOS and Android. That gives
+one render path and a simpler toolchain at the cost of WebView performance and
+true native UI. Choose Capacitor when you want a single web codebase in a native
+shell; choose this Expo + Tamagui + Solito setup when you need real native
+navigation, native modules, and platform-authentic UI with shared components.

@@ -1,0 +1,22 @@
+{
+  "name": "@PROJECT_SLUG_PLACEHOLDER/app",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "lint": "echo 'no-op'",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@PROJECT_SLUG_PLACEHOLDER/api": "workspace:*",
+    "@PROJECT_SLUG_PLACEHOLDER/types": "workspace:*",
+    "@PROJECT_SLUG_PLACEHOLDER/ui": "workspace:*",
+    "solito": "^5.0.0"
+  },
+  "devDependencies": {
+    "@PROJECT_SLUG_PLACEHOLDER/config": "workspace:*",
+    "react": "19.2.0",
+    "typescript": "^5.7.0"
+  }
+}

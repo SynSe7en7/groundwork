@@ -1,0 +1,5 @@
+{
+  "extends": "@PROJECT_SLUG_PLACEHOLDER/config/tsconfig.base.json",
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
