@@ -1,0 +1,2 @@
+-- Seed data for local development only. Keep this idempotent and free of real
+-- user data. Runs after migrations on `supabase db reset`.
