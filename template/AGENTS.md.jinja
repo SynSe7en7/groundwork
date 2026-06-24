@@ -12,11 +12,18 @@ This project was generated from the groundwork foundation (pinned in
 
 [[ project_description ]]
 
+[% if project_type == 'core' %]
+This project adopted the groundwork governance layer (this file, the alignment
+gates, and the committed-decision memory model) on top of its existing stack.
+The guardrails below are stack-neutral; fill in Commands and any stack-specific
+notes for this project.
+[% else %]
 - Type: [[ project_type ]] (web / mobile / desktop / hybrid)
 - Stack: Supabase is the backbone (Postgres, Auth, RLS, Storage, Edge Functions,
   one migration set). Vercel hosts web surfaces. Modal is the escape hatch for
   GPU, heavy Python, or async compute only, called over HTTPS, writing results
   back to Supabase, never in the hot CRUD or auth path.
+[% endif %]
 - Environments: `prod` and `develop`, parameterized purely by env var. See
   `docs/ENVIRONMENTS.md`.
 

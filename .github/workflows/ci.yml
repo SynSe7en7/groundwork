@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [web, mobile, desktop, hybrid]
+        preset: [web, mobile, desktop, hybrid, core]
     steps:
       - uses: actions/checkout@v4
 

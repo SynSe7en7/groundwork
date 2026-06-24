@@ -54,9 +54,10 @@ jobs:
       - name: Cache cargo
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: "./src-tauri -> target"
+          workspaces: "./desktop/src-tauri -> target"
 
       - name: Install frontend dependencies
+        working-directory: desktop
         run: npm install
 
       - name: Build, sign, and release
@@ -74,6 +75,7 @@ jobs:
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
+          projectPath: desktop
           tagName: ${{ github.ref_name }}
           releaseName: ${{ github.ref_name }}
           releaseBody: "See the assets to download and install this version."

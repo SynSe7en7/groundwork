@@ -34,6 +34,7 @@ foundation-recopy:
 [% if project_type == 'mobile' %]app_dir := "mobile"[% endif %]
 [% if project_type == 'desktop' %]app_dir := "desktop"[% endif %]
 [% if project_type == 'hybrid' %]app_dir := "."[% endif %]
+[% if project_type == 'core' %]app_dir := "."[% endif %]
 
 verify: lint typecheck test
     @echo "verify: OK"
@@ -52,6 +53,13 @@ typecheck:
     pnpm -r typecheck
 test:
     pnpm -r test
+[% elif project_type == 'core' %]
+lint:
+    @echo "groundwork core overlay: set lint for this project's stack in the justfile."
+typecheck:
+    @echo "groundwork core overlay: set typecheck for this project's stack."
+test:
+    @echo "groundwork core overlay: set test for this project's stack."
 [% else %]
 lint:
     cd {{app_dir}} && npm run lint

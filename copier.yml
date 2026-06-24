@@ -28,6 +28,38 @@ _templates_suffix: .jinja
 # each generated project. `copier update` reads it to 3-way-merge new versions.
 _answers_file: .copier-answers.yml
 
+# Files that must never clobber an existing one. This is what makes a core
+# overlay (project_type == 'core') safe on an EXISTING repo: any of these that
+# already exist are skipped, so no interactive prompt and no overwrite. On a
+# fresh project they are simply created.
+_skip_if_exists:
+  - "AGENTS.md"
+  - "CLAUDE.md"
+  - "README.md"
+  - ".gitignore"
+  - ".cursorignore"
+  - ".aiderignore"
+  - ".env.example"
+  - "CHARTER.md"
+  - "CONTEXT.md"
+  - "DESIGN.md"
+  - "justfile"
+  - ".gemini/settings.json"
+  - ".aider.conf.yml"
+  - ".cursor/rules/00-foundation.mdc"
+  - ".github/copilot-instructions.md"
+  - ".github/workflows/ci.yml"
+  - ".claude/settings.json"
+  - "docs/GATES.md"
+  - "docs/HANDOFF.md"
+  - "docs/ENVIRONMENTS.md"
+  - "docs/DEPLOY.md"
+  - "docs/SECURITY_CHECKLIST.md"
+  - "docs/adr/0000-record-architecture-decisions.md"
+  - "docs/adr/_TEMPLATE.md"
+  - "docs/prd/_TEMPLATE.md"
+  - "docs/plan/_TEMPLATE.md"
+
 # Jinja delimiters remapped to square brackets. Secondary brace-clash defense:
 # in a .jinja file, [[ var ]] substitutes and a literal {{ }} passes through
 # untouched (so just's {{env}} and Actions' ${{ }} survive).
@@ -75,12 +107,13 @@ project_description:
 
 project_type:
   type: str
-  help: "Which application surface? Selects exactly one preset to materialize."
+  help: "Application surface to scaffold, or 'core' to add governance to an existing project."
   choices:
     "Web (Next.js 16 App Router + TS + Tailwind)": web
     "Mobile (Expo / React Native + Expo Router; web-capable via RNW)": mobile
     "Desktop (Tauri 2 + web frontend in the system webview)": desktop
     "Hybrid (Turborepo: Expo + Next.js sharing UI via Tamagui/Solito)": hybrid
+    "Core only: add governance to an EXISTING project (no app scaffold)": core
   default: web
 
 # Supabase is the shared backbone for every preset. Asked, not assumed, but on.
@@ -151,9 +184,9 @@ license:
 # -------------------------------------------------------------------------
 _tasks:
   - command: "git init -q && git add -A"
-    when: "[[ _copier_operation == 'copy' ]]"
+    when: "[[ _copier_operation == 'copy' and project_type != 'core' ]]"
   - command: "git commit -q -m 'chore: scaffold from groundwork [[ _copier_answers._commit | default('untagged') ]]'"
-    when: "[[ _copier_operation == 'copy' ]]"
+    when: "[[ _copier_operation == 'copy' and project_type != 'core' ]]"
 
 _message_after_copy: |
   Project "[[ project_name ]]" scaffolded as a [[ project_type ]] preset.
