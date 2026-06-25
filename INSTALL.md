@@ -64,6 +64,14 @@ If you are an AI agent adding groundwork to the current repository, do this:
 5. Commit the new files on a feature branch and open a PR. Do not commit
    directly to the default branch.
 
+## First action: set the product vision
+
+After scaffolding a new project (or overlaying onto an existing one), run the
+`discovery` skill before building. It is a short PM/CEO session that fills
+`CHARTER.md`, `VISION.md`, and `docs/prd/`, then activates the skills and loops
+this project needs. See `skills/discovery/SKILL.md` and the AGENTS.md "Skills and
+loops" section.
+
 ## Updating later
 
 ```

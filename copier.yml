@@ -43,6 +43,7 @@ _skip_if_exists:
   - "CONTEXT.md"
   - "DESIGN.md"
   - "DECISIONS.md"
+  - "VISION.md"
 
 # Jinja delimiters remapped to square brackets. Secondary brace-clash defense:
 # in a .jinja file, [[ var ]] substitutes and a literal {{ }} passes through
