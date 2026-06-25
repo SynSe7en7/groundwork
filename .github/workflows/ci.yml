@@ -158,3 +158,10 @@ jobs:
             echo "FAIL: copier update did not propagate the governance change (GEMINI.md still present)"; exit 1
           fi
           echo "copier update propagated the governance change OK"
+
+  lint-skills-loops:
+    name: skills and loops are well-formed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/lint_skills_loops.py

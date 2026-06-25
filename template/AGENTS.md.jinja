@@ -89,6 +89,30 @@ Any agent-specific memory (Claude auto-memory, Cursor rules) is a thin pointer t
 these committed docs, never the source of truth. If a decision exists only in a
 vendor memory file, it is not ratified. Write it down here.
 
+## Skills and loops
+
+On a fresh project, run the `discovery` skill first: a short PM/CEO session that
+writes `CHARTER.md`, `VISION.md`, and `docs/prd/`, then activates the skills and
+loops this project needs.
+
+Skills are reusable how-tos under `skills/<name>/SKILL.md` (the cross-tool
+SKILL.md standard). Loops are repeatable work cycles under `loops/<name>.loop.md`;
+`loops/LOOPS.md` tracks which are active. Keep the active skill set small; 8 to 12
+is the ceiling before selection degrades.
+
+| Skill | Use when |
+|---|---|
+| `discovery` | a fresh project or overlay needs its product vision and charter set |
+| `run-gate` | an alignment gate needs to be walked and ratified before guarded work |
+
+| Loop | Checker | Use when |
+|---|---|---|
+| `plan-execute-verify` | `just build && just lint` | implementing a ratified plan slice |
+| `tdd-red-green-refactor` | `just test` | building or fixing a behavior with a test |
+
+A loop runs only if it clears the appropriateness gate in `loops/README.md`
+(work repeats, verification is automated, the budget absorbs retries, real tools).
+
 ## Guardrails
 
 Non-negotiable unless a ratified gate says otherwise.
