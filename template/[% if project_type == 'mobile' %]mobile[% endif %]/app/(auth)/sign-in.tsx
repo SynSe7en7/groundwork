@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, H2, Input, Paragraph, YStack } from 'tamagui';
 
 import { supabase } from '../../src/lib/supabase';
 
@@ -24,10 +24,11 @@ export default function SignInScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <YStack flex={1} padding="$6" gap="$4" justifyContent="center">
-        <H2>Sign in</H2>
-        <Input
+    <SafeAreaView style={styles.safe}>
+      <View style={styles.container}>
+        <Text style={styles.h2}>Sign in</Text>
+        <TextInput
+          style={styles.input}
           value={email}
           onChangeText={setEmail}
           placeholder="you@example.com"
@@ -35,17 +36,28 @@ export default function SignInScreen() {
           keyboardType="email-address"
           inputMode="email"
         />
-        <Input
+        <TextInput
+          style={styles.input}
           value={password}
           onChangeText={setPassword}
           placeholder="Password"
           secureTextEntry
         />
-        <Button disabled={busy} onPress={onSignIn}>
-          {busy ? 'Signing in...' : 'Sign in'}
-        </Button>
-        {status ? <Paragraph color="$red10">{status}</Paragraph> : null}
-      </YStack>
+        <Pressable style={styles.button} disabled={busy} onPress={onSignIn}>
+          <Text style={styles.buttonText}>{busy ? 'Signing in...' : 'Sign in'}</Text>
+        </Pressable>
+        {status ? <Text style={styles.error}>{status}</Text> : null}
+      </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safe: { flex: 1 },
+  container: { flex: 1, padding: 24, gap: 16, justifyContent: 'center' },
+  h2: { fontSize: 22, fontWeight: '700' },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16 },
+  button: { backgroundColor: '#111', borderRadius: 10, paddingVertical: 12, alignItems: 'center' },
+  buttonText: { color: '#fff', fontWeight: '600' },
+  error: { color: '#dc2626' },
+});
