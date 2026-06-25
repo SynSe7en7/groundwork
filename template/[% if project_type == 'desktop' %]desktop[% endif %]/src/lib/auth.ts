@@ -7,7 +7,10 @@ import { supabase } from "@/lib/supabase";
 // Deep-link OAuth for a packaged app: there is no localhost callback inside the
 // webview, so we open the provider in the system browser and let the OS hand
 // the result back via the app's registered URL scheme (see tauri.conf.json
-// `plugins.deep-link.desktop.schemes`). The scheme is the project slug.
+// `plugins.deep-link.desktop.schemes`). The default scheme is the fixed literal
+// "app", which must stay identical to the scheme registered in tauri.conf.json.
+// Override both in lockstep via NEXT_PUBLIC_DEEP_LINK_SCHEME plus the conf entry
+// if you need a project-unique scheme.
 const SCHEME = process.env.NEXT_PUBLIC_DEEP_LINK_SCHEME ?? "app";
 const REDIRECT_TO = `${SCHEME}://auth-callback`;
 

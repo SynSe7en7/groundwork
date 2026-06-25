@@ -14,11 +14,13 @@ const nextConfig = {
     'tamagui',
     '@tamagui/core',
     '@tamagui/next-plugin',
+    '@PROJECT_SLUG_PLACEHOLDER/ui',
+    '@PROJECT_SLUG_PLACEHOLDER/app',
   ],
 }
 
 const tamaguiPlugin = withTamagui({
-  config: '../../packages/ui/tamagui.config.ts',
+  config: '../../packages/ui/src/tamagui.config.ts',
   components: ['tamagui', '@PROJECT_SLUG_PLACEHOLDER/ui'],
   outputCSS: process.env.NODE_ENV === 'production' ? './public/tamagui.css' : null,
 })

@@ -33,10 +33,18 @@ Client-safe values only reach the webview. Set in `.env.local` (gitignored):
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — the
   publishable key is client-safe. The secret key (`sb_secret_*`) bypasses RLS
   and must never ship in the bundle.
-- `NEXT_PUBLIC_DEEP_LINK_SCHEME` — OAuth callback scheme; matches the
-  `deep-link` scheme in `src-tauri/tauri.conf.json` (the project slug).
+- `NEXT_PUBLIC_DEEP_LINK_SCHEME` — OAuth callback scheme; defaults to the fixed
+  literal `app` and must match the `deep-link` scheme registered in
+  `src-tauri/tauri.conf.json`. To use a project-unique scheme, change both in
+  lockstep.
 - `NEXT_PUBLIC_JOBS_API_BASE` — the web tier the webview POSTs jobs to. That
   tier holds the Modal secret; this app never does.
+
+The webview runs under a restrictive Content-Security-Policy set in
+`app.security.csp` of `src-tauri/tauri.conf.json`. It allows `self`, the Tauri
+IPC origin, and managed Supabase hosts (`*.supabase.co` over https and wss).
+Add the origin of `NEXT_PUBLIC_JOBS_API_BASE` (and any self-hosted Supabase
+host) to `connect-src` so the webview can reach them.
 
 ## Signing and self-update
 

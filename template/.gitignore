@@ -1,3 +1,4 @@
+# groundwork-managed secret ignores
 # Secrets -- NEVER commit. Real values live only in your shell / Vercel /
 # Supabase / Modal dashboards. .env.example IS tracked (placeholders only).
 .env
@@ -7,6 +8,7 @@
 *.key
 *.p12
 *.pfx
+*.keystore
 secrets/
 **/secrets/
 

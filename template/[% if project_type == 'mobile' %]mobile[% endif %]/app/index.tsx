@@ -1,4 +1,5 @@
 import { Link } from 'expo-router';
+import { Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, H1, Paragraph, YStack } from 'tamagui';
 
@@ -22,7 +23,13 @@ export default function HomeScreen() {
           onPress={async () => {
             // Example of the heavy-compute seam. The device never holds the
             // Modal secret; the call goes through a Supabase Edge Function.
-            await runHeavyCompute({ sample: true });
+            // When the seam is not configured it returns ok: false with a
+            // message instead of throwing.
+            const result = await runHeavyCompute({ sample: true });
+            Alert.alert(
+              'Heavy compute',
+              result.ok ? 'Job accepted.' : (result.error ?? 'Request failed.'),
+            );
           }}
         >
           Run heavy compute

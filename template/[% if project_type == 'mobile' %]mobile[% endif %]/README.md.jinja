@@ -26,6 +26,17 @@ Sessions persist through an encrypted adapter (`src/lib/secure-storage.ts`): a p
 
 `src/lib/heavy-compute.ts` calls a Supabase Edge Function (`run-heavy`) that wraps a Modal HTTPS endpoint. The Modal secret stays server-side and never ships in the bundle.
 
+The `run-heavy` function is scaffolded only when the project opts into Modal, so the seam is off by default. With it off, `runHeavyCompute` returns `ok: false` with a message instead of failing on the missing function. Once the function is deployed, enable the seam by setting `EXPO_PUBLIC_HEAVY_COMPUTE_ENABLED=true`.
+
+## Verify
+
+```sh
+npm install
+npx tsc --noEmit   # same as: npm run typecheck
+```
+
+`npm install` and `npx tsc --noEmit` run in a plain container. The web export (`expo export`) and native builds need the Expo tooling and the EAS cloud toolchain, so they do not run there.
+
 ## Web export and Vercel
 
 ```sh

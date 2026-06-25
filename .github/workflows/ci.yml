@@ -9,8 +9,9 @@ permissions:
   contents: read
 
 jobs:
+  # Fast gate: every mode renders and key files exist; hybrid slug is substituted.
   render:
-    name: render presets
+    name: render (${{ matrix.preset }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -18,26 +19,144 @@ jobs:
         preset: [web, mobile, desktop, hybrid, core]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-
-      - name: Configure git (Copier post-copy tasks run git init + commit)
-        run: |
-          git config --global user.email "ci@groundwork.local"
-          git config --global user.name "groundwork CI"
-
-      - name: Render ${{ matrix.preset }}
+      - uses: astral-sh/setup-uv@v5
+      - run: git config --global user.email ci@groundwork.local && git config --global user.name "groundwork CI"
+      - name: Render and assert
         run: |
           set -euo pipefail
           out="$(mktemp -d)"
-          # --trust is required because the template declares _tasks (git init).
-          # --vcs-ref HEAD renders the checked-out commit (no release tag needed).
           uvx copier copy --defaults --trust --vcs-ref HEAD \
             --data project_type=${{ matrix.preset }} \
-            --data project_name="CI ${{ matrix.preset }}" \
-            . "$out"
-          test -f "$out/AGENTS.md"      || { echo "AGENTS.md missing";   exit 1; }
-          test -f "$out/docs/GATES.md"  || { echo "docs/GATES.md missing"; exit 1; }
+            --data project_name="CI ${{ matrix.preset }}" . "$out"
+          test -f "$out/AGENTS.md" || { echo "AGENTS.md missing"; exit 1; }
+          test -f "$out/docs/GATES.md" || { echo "docs/GATES.md missing"; exit 1; }
           test -f "$out/.copier-answers.yml" || { echo "answers file missing"; exit 1; }
-          echo "Rendered ${{ matrix.preset }} OK"
+          if [ "${{ matrix.preset }}" = "hybrid" ]; then
+            if grep -rq "PROJECT_SLUG_PLACEHOLDER" "$out"; then echo "slug placeholder not replaced"; exit 1; fi
+          fi
+          echo "rendered ${{ matrix.preset }} OK"
+
+  # Build gate: web preset must install, typecheck, lint, and build.
+  build-web:
+    name: build web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: git config --global user.email ci@groundwork.local && git config --global user.name "groundwork CI"
+      - name: Render web
+        run: |
+          set -euo pipefail
+          echo "OUT=$(mktemp -d)" >> "$GITHUB_ENV"
+      - run: uvx copier copy --defaults --trust --skip-tasks --vcs-ref HEAD --data project_type=web --data project_name="CI Web" . "$OUT"
+      - name: install + verify
+        working-directory: ${{ env.OUT }}/web
+        run: |
+          set -euo pipefail
+          npm install
+          npm run typecheck
+          npm run lint
+          npm run build
+
+  # Build gate: mobile must install and typecheck; native binary build is EAS.
+  build-mobile:
+    name: build mobile (typecheck + web export)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: git config --global user.email ci@groundwork.local && git config --global user.name "groundwork CI"
+      - run: echo "OUT=$(mktemp -d)" >> "$GITHUB_ENV"
+      - run: uvx copier copy --defaults --trust --skip-tasks --vcs-ref HEAD --data project_type=mobile --data project_name="CI Mobile" . "$OUT"
+      - name: install + typecheck
+        working-directory: ${{ env.OUT }}/mobile
+        run: |
+          set -euo pipefail
+          npm install
+          npx tsc --noEmit
+
+  # Build gate: hybrid must install (pnpm) and typecheck across the workspace.
+  build-hybrid:
+    name: build hybrid (pnpm typecheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: git config --global user.email ci@groundwork.local && git config --global user.name "groundwork CI"
+      - run: echo "OUT=$(mktemp -d)" >> "$GITHUB_ENV"
+      # --trust runs the slug-substitution task so pnpm can resolve workspace links.
+      - run: uvx copier copy --defaults --trust --vcs-ref HEAD --data project_type=hybrid --data project_name="CI Hybrid" . "$OUT"
+      - name: install + typecheck
+        working-directory: ${{ env.OUT }}
+        run: |
+          set -euo pipefail
+          pnpm install
+          pnpm -r typecheck
+
+  # Build gate: desktop frontend builds and typechecks, then the full Tauri build.
+  build-desktop:
+    name: build desktop (frontend + tauri)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: dtolnay/rust-toolchain@stable
+      - name: System deps for Tauri
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libssl-dev
+      - run: git config --global user.email ci@groundwork.local && git config --global user.name "groundwork CI"
+      - run: echo "OUT=$(mktemp -d)" >> "$GITHUB_ENV"
+      - run: uvx copier copy --defaults --trust --skip-tasks --vcs-ref HEAD --data project_type=desktop --data project_name="CI Desktop" . "$OUT"
+      - name: install + frontend verify
+        working-directory: ${{ env.OUT }}/desktop
+        run: |
+          set -euo pipefail
+          npm install
+          npm run typecheck
+          npm run lint
+          npm run build
+      - name: tauri build
+        working-directory: ${{ env.OUT }}/desktop
+        run: npm run tauri build -- --no-bundle
+
+  # Regression gate: copier update must actually propagate governance changes.
+  # Scaffolds at the latest released tag, updates to HEAD, and asserts a known
+  # v0.2 governance change (GEMINI.md dropped from .gemini/settings.json) lands.
+  update-propagation:
+    name: copier update propagates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+      - run: git config --global user.email ci@groundwork.local && git config --global user.name "groundwork CI"
+      - name: scaffold at prior tag, update to HEAD, assert propagation
+        run: |
+          set -euo pipefail
+          base="$(git tag --sort=-v:refname | head -1 || true)"
+          if [ -z "$base" ]; then echo "no prior tag; skipping"; exit 0; fi
+          echo "base tag: $base"
+          proj="$(mktemp -d)"
+          uvx copier copy --defaults --trust --vcs-ref "$base" --data project_type=web --data project_name="UT" . "$proj"
+          # baseline contains the old governance content
+          grep -q "GEMINI.md" "$proj/.gemini/settings.json" || { echo "baseline unexpectedly lacks GEMINI.md; choose another sentinel"; exit 0; }
+          ( cd "$proj" && uvx copier update --defaults --trust --vcs-ref HEAD )
+          if grep -q "GEMINI.md" "$proj/.gemini/settings.json"; then
+            echo "FAIL: copier update did not propagate the governance change (GEMINI.md still present)"; exit 1
+          fi
+          echo "copier update propagated the governance change OK"
