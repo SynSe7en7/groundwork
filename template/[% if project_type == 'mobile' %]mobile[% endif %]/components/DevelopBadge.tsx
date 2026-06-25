@@ -1,4 +1,4 @@
-import { SizableText, XStack } from 'tamagui';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { env, isProd } from '../src/lib/env';
 
@@ -10,18 +10,21 @@ export function DevelopBadge() {
   }
 
   return (
-    <XStack
-      alignSelf="flex-start"
-      backgroundColor="$yellow4"
-      borderColor="$yellow8"
-      borderWidth={1}
-      borderRadius="$10"
-      paddingHorizontal="$3"
-      paddingVertical="$1"
-    >
-      <SizableText size="$1" color="$yellow11" fontWeight="700">
-        {env.appEnv.toUpperCase()}
-      </SizableText>
-    </XStack>
+    <View style={styles.badge}>
+      <Text style={styles.text}>{env.appEnv.toUpperCase()}</Text>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  badge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#fef9c3',
+    borderColor: '#eab308',
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  text: { color: '#854d0e', fontWeight: '700', fontSize: 12 },
+});

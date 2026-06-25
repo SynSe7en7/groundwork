@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
   const { data: job, error } = await supabase
     .from("jobs")
-    .insert({ user_id: user.id, status: "queued", input: body })
+    .insert({ user_id: user.id, status: "queued", payload: body })
     .select("id")
     .single();
 

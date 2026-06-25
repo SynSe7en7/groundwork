@@ -16,8 +16,8 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   // Tauri dev serves the export on a fixed dev URL; keep asset paths relative.
   assetPrefix: isProd ? undefined : undefined,
-  // Surface lint and type errors at build time rather than masking them.
-  eslint: { ignoreDuringBuilds: false },
+  // Surface type errors at build time rather than masking them. Linting runs
+  // via the `lint` script (Next 16 removed the `eslint` next.config option).
   typescript: { ignoreBuildErrors: false },
 };
 

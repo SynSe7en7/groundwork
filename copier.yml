@@ -28,37 +28,21 @@ _templates_suffix: .jinja
 # each generated project. `copier update` reads it to 3-way-merge new versions.
 _answers_file: .copier-answers.yml
 
-# Files that must never clobber an existing one. This is what makes a core
-# overlay (project_type == 'core') safe on an EXISTING repo: any of these that
-# already exist are skipped, so no interactive prompt and no overwrite. On a
-# fresh project they are simply created.
+# Files that are seeded ONCE and then OWNED by the project: never clobber an
+# existing one (so a core overlay is safe on an existing repo) and never push
+# foundation updates over them (the user fills these in). Keep this list SMALL.
+# Template-OWNED governance files (AGENTS.md, docs/GATES.md, the gate templates,
+# the tool bridges, ci.yml) are deliberately NOT here, so `copier update` can
+# 3-way-merge foundation improvements into them. Re-baseline a stale governance
+# file with `just foundation-recopy` if needed.
 _skip_if_exists:
-  - "AGENTS.md"
-  - "CLAUDE.md"
   - "README.md"
   - ".gitignore"
-  - ".cursorignore"
-  - ".aiderignore"
   - ".env.example"
   - "CHARTER.md"
   - "CONTEXT.md"
   - "DESIGN.md"
-  - "justfile"
-  - ".gemini/settings.json"
-  - ".aider.conf.yml"
-  - ".cursor/rules/00-foundation.mdc"
-  - ".github/copilot-instructions.md"
-  - ".github/workflows/ci.yml"
-  - ".claude/settings.json"
-  - "docs/GATES.md"
-  - "docs/HANDOFF.md"
-  - "docs/ENVIRONMENTS.md"
-  - "docs/DEPLOY.md"
-  - "docs/SECURITY_CHECKLIST.md"
-  - "docs/adr/0000-record-architecture-decisions.md"
-  - "docs/adr/_TEMPLATE.md"
-  - "docs/prd/_TEMPLATE.md"
-  - "docs/plan/_TEMPLATE.md"
+  - "DECISIONS.md"
 
 # Jinja delimiters remapped to square brackets. Secondary brace-clash defense:
 # in a .jinja file, [[ var ]] substitutes and a literal {{ }} passes through
@@ -183,6 +167,18 @@ license:
 # POST-GENERATION (runs after copy AND update; --trust required to run)
 # -------------------------------------------------------------------------
 _tasks:
+  # Hybrid ships @PROJECT_SLUG_PLACEHOLDER as the monorepo package scope; replace
+  # it with the real slug so pnpm can resolve workspace links. Runs before git.
+  - command: >-
+      python3 -c "import pathlib; slug='[[ project_slug ]]';
+      exts={'.json','.ts','.tsx','.js','.jsx','.mjs','.cjs','.md','.yaml','.yml'};
+      [p.write_text(p.read_text().replace('PROJECT_SLUG_PLACEHOLDER', slug)) for p in pathlib.Path('.').rglob('*') if p.is_file() and p.suffix in exts and 'PROJECT_SLUG_PLACEHOLDER' in p.read_text(errors='ignore')]"
+    when: "[[ _copier_operation == 'copy' and project_type == 'hybrid' ]]"
+  # Core overlay onto an existing repo: that repo's .gitignore is skip-listed
+  # (kept), so append the foundation secret-ignore block if it is not present.
+  - command: >-
+      sh -c 'grep -q "groundwork-managed secret ignores" .gitignore 2>/dev/null || printf "\n# groundwork-managed secret ignores\n.env\n.env.*\n!.env.example\n*.pem\n*.key\n*.p12\n*.keystore\nsecrets/\n.claude/settings.local.json\n" >> .gitignore'
+    when: "[[ _copier_operation == 'copy' and project_type == 'core' ]]"
   - command: "git init -q && git add -A"
     when: "[[ _copier_operation == 'copy' and project_type != 'core' ]]"
   - command: "git commit -q -m 'chore: scaffold from groundwork [[ _copier_answers._commit | default('untagged') ]]'"
