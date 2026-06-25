@@ -138,24 +138,22 @@ jobs:
   # v0.2 governance change (GEMINI.md dropped from .gemini/settings.json) lands.
   update-propagation:
     name: copier update propagates
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: astral-sh/setup-uv@v5
       - run: git config --global user.email ci@groundwork.local && git config --global user.name "groundwork CI"
-      - name: scaffold at prior tag, update to HEAD, assert propagation
+      - name: scaffold at v0.1.0, update to this PR branch, assert propagation
         run: |
           set -euo pipefail
-          base="$(git tag --sort=-v:refname | head -1 || true)"
-          if [ -z "$base" ]; then echo "no prior tag; skipping"; exit 0; fi
-          echo "base tag: $base"
           proj="$(mktemp -d)"
-          uvx copier copy --defaults --trust --vcs-ref "$base" --data project_type=web --data project_name="UT" . "$proj"
-          # baseline contains the old governance content
-          grep -q "GEMINI.md" "$proj/.gemini/settings.json" || { echo "baseline unexpectedly lacks GEMINI.md; choose another sentinel"; exit 0; }
-          ( cd "$proj" && uvx copier update --defaults --trust --vcs-ref HEAD )
+          # Base scaffold from the public repo at the released tag.
+          uvx copier copy --defaults --trust --vcs-ref v0.1.0 \
+            --data project_type=web --data project_name="UT" \
+            gh:SynSe7en7/groundwork "$proj"
+          grep -q "GEMINI.md" "$proj/.gemini/settings.json" || { echo "baseline lacks GEMINI.md sentinel; skipping"; exit 0; }
+          # Update to this PR's branch HEAD.
+          ( cd "$proj" && uvx copier update --defaults --trust --vcs-ref "${{ github.head_ref }}" )
           if grep -q "GEMINI.md" "$proj/.gemini/settings.json"; then
             echo "FAIL: copier update did not propagate the governance change (GEMINI.md still present)"; exit 1
           fi
