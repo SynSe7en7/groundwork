@@ -139,9 +139,10 @@ The high-leverage move. Two halves; 1a underpins 1b.
   `copier update --pretend` that opens an issue as the default fallback.
 - Scheduled float-build (cron) that flags when the pinned matrix has drifted out
   from under the scaffolds, before users hit it.
-- Reposition: the README leads with the governed-update value, and surfaces that
-  discovery assigns the scaffold; the moat is the headline, not a footnote below
-  the spin-up paths.
+- Reposition: SHIPPED. The README now leads with the governed-update channel (a
+  top "The update channel (the point)" section covering doctor, preview, update,
+  and the harvest pull-up) and states that discovery assigns the scaffold. The
+  moat is the headline above the spin-up paths.
 - The pull-up harvest path: SHIPPED (mechanism). A `harvest` skill
   (`template/skills/harvest/`, shipped into projects) plus a foundation-root
   `HARVEST.md` ritual that promote a battle-tested pattern, skill, loop, or ADR

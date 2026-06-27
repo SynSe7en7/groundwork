@@ -1,15 +1,42 @@
 # groundwork
 
-A reusable, model-agnostic foundation for new projects (web, mobile, desktop, hybrid). It carries the guardrails, alignment gates, committed-decision memory model, deploy and security runbooks, repo hygiene, and tool-neutral agent config a project should start with, so a new app begins aligned instead of improvised.
+groundwork is a model-agnostic project foundation with a governed-update channel.
+Improve the foundation once and `copier update` carries the change into every
+project you have already generated; `harvest` promotes a pattern proven in a real
+project back up, so the next release shares it with all of them. That two-way
+channel is the point. Scaffolding a good starting project is the table stakes
+underneath it.
 
-It is a Copier template and also a GitHub template repository.
+It supports four equally-maintained scaffolds (web, mobile, desktop, hybrid). A
+project's scaffold is assigned during discovery from its real requirements, and
+the project then carries only that scaffold. groundwork is a Copier template and
+also a GitHub template repository.
+
+## The update channel (the point)
+
+A project generated from groundwork stays connected to it:
+
+```
+just doctor                       # prerequisites, clean tree, and whether you are behind the latest release
+just foundation-update-preview    # dry-run the next update (writes nothing)
+just foundation-update            # 3-way merge the latest foundation release in
+just foundation-update-to vX.Y.Z  # pin to a specific version
+```
+
+Updates require a clean tree; resolve any conflict markers, then run `just verify`.
+
+The reverse direction closes the loop. When a pattern, skill, loop, or decision
+proves itself in a real project, the `harvest` skill promotes it back into the
+foundation, gated by the two-real-instances bar, so every project inherits it on
+the next update. See [HARVEST.md](HARVEST.md).
 
 ## What a spawned project gets
 
 - `AGENTS.md`: the canonical, tool-neutral instruction file. Read natively by Codex, Cursor, Copilot, Windsurf, Zed and others; bridged to Claude Code, Gemini CLI, and Aider by one-line pointer files.
 - Alignment gates: a `docs/GATES.md` state file plus committed gate artifacts (CHARTER, ADRs, PRD and plan, DESIGN, security checklist). Decisions are written down before the work that depends on them.
-- Stack defaults: Supabase backbone, Vercel for web, Modal as the heavy-compute escape hatch. One of four presets (web, mobile, desktop, hybrid).
-- Hygiene: secrets as placeholders only, deny rules on `.env`, advisory CI tripwires.
+- Skills and loops: model-agnostic how-tos (`discovery`, `run-gate`, `harvest`) and work cycles, read by any SKILL.md-aware tool.
+- Stack defaults: Supabase backbone, Vercel for web, Modal as the heavy-compute escape hatch, and one of the four scaffolds.
+- Hygiene and CI: secrets as placeholders only, deny rules on `.env`, a secret scanner, lockfiles with frozen installs, and content-drift snapshots.
 
 ## Spin up a project
 
@@ -19,7 +46,7 @@ It is a Copier template and also a GitHub template repository.
 uvx copier copy --trust gh:SynSe7en7/groundwork ./my-new-project
 ```
 
-Runs the questionnaire, materializes one preset, writes `.copier-answers.yml` pinned to the foundation tag, and inits fresh git history. Pin a known version with `--vcs-ref vX.Y.Z`.
+Runs the questionnaire, materializes one scaffold, writes `.copier-answers.yml` pinned to the foundation tag, and inits fresh git history. Pin a known version with `--vcs-ref vX.Y.Z`.
 
 ### Path B: GitHub template (zero-install, one-off)
 
@@ -36,20 +63,12 @@ uvx copier copy --trust --data project_type=core gh:SynSe7en7/groundwork .
 
 Existing files are never overwritten, and no commit is made. See [INSTALL.md](INSTALL.md) for the full guide, including a block an AI coding agent can run verbatim.
 
-## Update the foundation in a project
-
-```
-just foundation-update             # 3-way merge the latest foundation release in
-just foundation-update-to vX.Y.Z   # pin to a version
-```
-
-Requires a clean working tree. Resolve any conflict markers, then run `just verify`.
-
 ## Repo layout
 
 - `template/` everything a spawned project receives.
 - `copier.yml` the questionnaire and engine config.
 - `CHARTER.md`, `DECISIONS.md`, `docs/adr/` the foundation's own charter and decisions.
+- `HARVEST.md` the ritual for promoting a proven pattern from a project back into the foundation.
 
 ## Requirements
 
@@ -58,4 +77,4 @@ Requires a clean working tree. Resolve any conflict markers, then run `just veri
 
 ## Versioning
 
-The foundation is tagged with semver. Patch is guardrail and doc fixes, minor is new optional capability behind a toggle (with a default), major is a breaking restructure (ships a MIGRATING note). Published tags are never moved.
+The foundation is tagged with semver and released with release-please from conventional commits: `feat` is a new capability (a minor bump while pre-1.0), `fix` is a patch, and a breaking change bumps the minor until 1.0. A release is cut by merging release-please's release pull request, which writes the tag, the GitHub Release, and `CHANGELOG.md`. All four scaffolds are first-class and stay build-verified on every change. Published tags are never moved.
