@@ -56,7 +56,7 @@ jobs:
         working-directory: ${{ env.OUT }}/web
         run: |
           set -euo pipefail
-          npm install
+          npm ci
           npm run typecheck
           npm run lint
           npm run build
@@ -78,7 +78,7 @@ jobs:
         working-directory: ${{ env.OUT }}/mobile
         run: |
           set -euo pipefail
-          npm install
+          npm ci
           npx tsc --noEmit
 
   # Build gate: hybrid must install (pnpm) and typecheck across the workspace.
@@ -100,7 +100,7 @@ jobs:
         working-directory: ${{ env.OUT }}
         run: |
           set -euo pipefail
-          pnpm install
+          pnpm install --frozen-lockfile
           pnpm -r typecheck
 
   # Build gate: desktop frontend builds and typechecks, then the full Tauri build.
@@ -127,7 +127,7 @@ jobs:
         working-directory: ${{ env.OUT }}/desktop
         run: |
           set -euo pipefail
-          npm install
+          npm ci
           npm run typecheck
           npm run lint
           npm run build

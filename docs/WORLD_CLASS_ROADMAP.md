@@ -74,8 +74,10 @@ Low effort, high stakes, no dependencies. Ship first.
 - Add a secret-scanning job (gitleaks) to the generated CI so a leaked key fails
   the PR, and to the foundation CI itself. Prevention plus detection, not
   prevention alone.
-- Commit lockfiles per scaffold and switch CI installs to the frozen path
-  (`npm ci`, `pnpm install --frozen-lockfile`).
+- SHIPPED: committed lockfiles per scaffold (npm `package-lock.json` for
+  web/mobile/desktop, `Cargo.lock` for desktop, pnpm `pnpm-lock.yaml` for hybrid)
+  and switched CI installs to the frozen path (`npm ci`,
+  `pnpm install --frozen-lockfile`). Regenerate with `scripts/update_lockfiles.sh`.
 - Add `SECURITY.md`.
 
 Acceptance: OpenSSF Scorecard pinned-dependencies passes; a planted secret fails
