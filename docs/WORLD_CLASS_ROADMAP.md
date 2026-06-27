@@ -87,11 +87,12 @@ The high-leverage move. Two halves; 1a underpins 1b.
 
 ### 1a. Treat the foundation as software under test
 
-- Golden-output snapshot tests: commit a full rendered tree per scaffold (all four)
-  plus the core overlay, diff in CI, so generated content drift is a reviewable
-  failure (today CI checks file presence, not content). Use the maintained
-  `pytest-copie` (12rambau), or a shell render-and-diff, not the stale
-  `pytest-copier` proof-of-concept.
+- Golden-output snapshot tests: SHIPPED. `scripts/snapshot.py` renders each
+  scaffold (all four) plus the core overlay and diffs a per-scaffold
+  `path -> sha256` manifest (`tests/golden/*.manifest`) in CI, so generated
+  content drift is a reviewable failure (CI previously checked file presence, not
+  content). Implemented stdlib-only (no `pytest-copie` dependency); full-tree
+  snapshots or `pytest-copie` remain an option if richer per-PR diffs are wanted.
 - Option-combination matrix: render and verify representative toggle combinations
   (use_supabase, use_modal, has_ui, two-env x project_type), not just
   `--defaults` per scaffold.

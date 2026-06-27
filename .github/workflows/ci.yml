@@ -204,3 +204,22 @@ jobs:
           curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" \
             | tar -xz gitleaks
           ./gitleaks dir . --redact --no-banner
+
+  # Content drift gate: re-render each scaffold and diff its content against the
+  # committed golden manifest (tests/golden/*.manifest). Any added, removed, or
+  # changed generated file fails until the manifest is regenerated with
+  # scripts/snapshot.py update. Copier is pinned so the hash baseline is stable.
+  golden-snapshots:
+    name: golden snapshots (content drift)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+      - run: |
+          git config --global user.email ci@groundwork.local
+          git config --global user.name "groundwork CI"
+          git config --global gc.auto 0
+      - name: re-render scaffolds and diff against golden manifests
+        env:
+          COPIER_CMD: uvx copier@9.16.0
+        run: python3 scripts/snapshot.py check
