@@ -127,10 +127,11 @@ The high-leverage move. Two halves; 1a underpins 1b.
 
 ### 1b. Make the update channel a first-class product
 
-- `just doctor`: checks prerequisites (uv, just, git auth), a clean tree, and
-  drift (is this project behind the latest foundation tag, cruft-style).
-- `just foundation-update --preview`: dry-run the 3-way merge diff before
-  applying.
+- `just doctor`: SHIPPED. Checks prerequisites (uv, git, just), a clean tree, and
+  drift (compares the project's `.copier-answers.yml` `_commit` to the latest
+  foundation tag, cruft-style), and suggests the next step. Read-only.
+- `just foundation-update-preview`: SHIPPED. Dry-runs the update via copier
+  `--pretend` (writes nothing) before applying.
 - Ship a `renovate.json` in spawned projects using Renovate's first-class
   `copier` manager (auto-opens `copier update` PRs), and run Renovate or
   Dependabot on the foundation itself. Acceptance is that the auto-opened PR
