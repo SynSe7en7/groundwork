@@ -210,12 +210,20 @@ release emits provenance and an SBOM; the edge function has limits.
 
 This category wins on proof, not feature lists.
 
-- A branded entry point: `create-groundwork` (npx) or a memorable wrapper that
-  runs doctor, then copier, then the first run.
-- A real one-command deployed preview for the web scaffold (a wired `just deploy`
-  and a Vercel deploy path, not placeholder commands).
-- Foreground the first run: after scaffold, offer to install deps and start the
-  dev server or run `just verify`.
+- A branded entry point: SHIPPED. `scripts/create-groundwork.sh` is the in-repo
+  wrapper (chosen over a published npx package to avoid a publish dependency); a
+  curl one-liner preflights prerequisites, runs `copier copy`, and offers the
+  first run. Forwards extra copier args; `GROUNDWORK_SRC` overrides the source for
+  local dev.
+- A real one-command deployed preview for the web scaffold: WIRED, verification
+  pending a real web instance. The web scaffold's justfile now has `deploy-preview`
+  (`npx vercel deploy`, prints a live URL) and a backend-first `deploy`
+  (`npx vercel deploy --prod`), replacing the placeholder echoes. It needs the
+  Vercel CLI authenticated, so it is verified on the first real web project deploy.
+- Foreground the first run: SHIPPED. A scaffold-aware `just setup` (npm/pnpm
+  install) plus the wrapper's prompt to run `just setup && just verify` after
+  generation. `verify`'s test step is now `--if-present`, so a fresh scaffold
+  passes verify out of the box (the missing-test gap that CI never exercised).
 - One runnable example app and a published scaffold-to-deploy transcript; a
   minimal docs page.
 - `CONTRIBUTING.md`: SHIPPED. The two-real-instances bar, a where-it-goes table
