@@ -105,8 +105,13 @@ The high-leverage move. Two halves; 1a underpins 1b.
   `TBD`); a gate marked ratified names a real artifact. SHIPPED in
   `scripts/lint_skills_loops.py`. The deeper ratified-gate-artifact-status=accepted
   cross-check rides with the Phase 2 gate enforcement.
-- Release engineering: adopt changesets or release-please for a generated
-  `CHANGELOG.md`, GitHub Releases per tag, and a `MIGRATING.md` on majors.
+- Release engineering: SHIPPED via release-please (manifest-driven, `release-type:
+  simple`), not changesets (the foundation has no root `package.json`). It
+  maintains a release PR from conventional commits and, on merge, cuts the tag,
+  the GitHub Release, and `CHANGELOG.md`. Versioning is now commit-driven, so the
+  phase-to-version labels in this roadmap are indicative, not release gates;
+  Phase 0's work rolls into the next minor (v0.4.0). `MIGRATING.md` on the first
+  major remains to add.
 - Keep all four scaffolds building on every change (no scaffold is demoted). Make
   CI fast with dependency caching (npm, pnpm, cargo), a per-scaffold matrix, and
   parallel jobs. If the full multi-OS desktop release build is too slow for every
