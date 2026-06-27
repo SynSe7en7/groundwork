@@ -23,11 +23,11 @@ that does both: a build-verified stack and an agent-governance layer that
 carries proven patterns back up.
 
 Every behavioral claim it makes is backed by a CI check that fails the pull
-request if the claim breaks. The last green run exercised 33 such checks,
-including 15 version-by-scaffold update cells that prove a generated project can
-take a foundation update without losing its own work. The fleet-scale outcome (a
-set of real projects all sitting on the latest tag with no manual update step)
-lands once a second project is generated and tracked.
+request if the claim breaks: a full matrix of render, build, and lint jobs plus
+15 version-by-scaffold update cells that prove a generated project can take a
+foundation update without losing its own work. The fleet-scale outcome (a set of
+real projects all sitting on the latest tag with no manual update step) lands once
+a second project is generated and tracked.
 
 ## The update channel (the point)
 
