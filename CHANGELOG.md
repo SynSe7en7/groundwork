@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/SynSe7en7/groundwork/compare/v0.7.1...v0.8.0) (2026-06-27)
+
+
+### Features
+
+* **desktop:** attest build provenance + emit SBOM on release ([#32](https://github.com/SynSe7en7/groundwork/issues/32)) ([be7b15b](https://github.com/SynSe7en7/groundwork/commit/be7b15b8e5165656871075f088ba7f4dbc3f0251))
+
 ## [0.7.1](https://github.com/SynSe7en7/groundwork/compare/v0.7.0...v0.7.1) (2026-06-27)
 
 
