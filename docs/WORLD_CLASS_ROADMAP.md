@@ -169,3 +169,28 @@ positioning win, and depends on 1a being trustworthy. Phase 2's gate-enforcement
 reuses the content-validating lint from 1a. Phase 3 is adoption, which is only
 worth doing once the product underneath is trustworthy. Phase 4 is demand-gated
 on real projects.
+
+## Execution notes (improvements for the implementing agent)
+
+These sharpen the plan; apply them as you build.
+
+- Lead with a tracer-bullet slice, not all of Phase 1a at once. The thinnest
+  end-to-end proof of the moat is: (1) the every-prior-version `copier update`
+  test (v0.1/v0.2/v0.3 to HEAD, web plus core overlay) and (2) one real harvest
+  round-trip. Ship that first; it proves the bet and de-risks the rest.
+- Dogfood the foundation's own loops: build each item test-first. Write the CI
+  assertion for the property (it fails red), then implement until green. This is
+  the plan-execute-verify and tdd loops applied to the foundation itself, and it
+  makes "CI-enforce every claim" literal.
+- Pull one rebalance into Phase 0: demote desktop and hybrid to render-only in
+  CI now (a quick `.github/workflows/ci.yml` edit). It immediately cuts CI cost
+  and matches the two-real-instances rule, ahead of the fuller Phase 1 rebalance.
+- Verify before relying: Renovate's `copier` manager maturity (fallback: a small
+  cron job that runs `copier update --pretend` and opens an issue); `pytest-copier`
+  vs a shell render-and-diff fallback for golden snapshots; and pick the release
+  tool deliberately (changesets suits this single-repo case; release-please is the
+  alternative). Record the choice in DECISIONS.md.
+- North star for "world-class," made measurable: a fleet of real projects all
+  sitting on the latest foundation tag with zero manual update steps, and every
+  foundation claim backed by a CI check. Track the count of projects-on-latest as
+  the headline metric once a second project exists.
