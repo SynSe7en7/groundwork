@@ -1,6 +1,6 @@
 ---
 title: Decisions
-updated: 2026-06-23
+updated: 2026-06-27
 ---
 
 # Decisions
@@ -20,3 +20,4 @@ Running log of ratified calls on the foundation itself that do not warrant a ful
 - 2026-06-24: `copier update` content propagation requires that template-owned governance files stay OUT of `_skip_if_exists`. The v0.1.0 list was too broad and silently blocked all governance updates; v0.2.0 shrinks it to user-owned seed-once files only, and a CI job asserts an upstream change actually lands after `copier update`.
 - 2026-06-24: The standalone mobile preset uses React Native styling, not Tamagui. Tamagui (v1.144 and v2.3.3) does not yet typecheck against React Native 0.83 (Expo SDK 55), and a single app does not need a cross-platform design system. Tamagui remains the hybrid preset's shared design system; a mobile project adopts it when it graduates to the hybrid monorepo.
 - 2026-06-25: v0.3 adds a discovery-driven skills and loops layer: a `discovery` skill (post-install PM/CEO session writing CHARTER/VISION/PRD), a `run-gate` skill, and two loops (`tdd-red-green-refactor`, `plan-execute-verify`) as committed, model-agnostic SKILL.md / .loop.md playbooks (the cross-tool SKILL.md standard), plus a VISION.md artifact. Selection is deterministic from `.copier-answers.yml` plus what discovery activates; the active skill set is kept under ~12 to avoid description context tax. The stage-3 orchestrator loop, the outer roadmap-review loop, the evaluator-optimizer loop, and vendored external skills are deferred until a real project demands them. See `docs/SKILLS_LOOPS_PLAN.md`.
+- 2026-06-27: Golden-output snapshots are stored as a per-scaffold `path -> sha256` manifest (`tests/golden/*.manifest`), not full rendered trees, to keep the repo light while still failing CI on any content drift. Rendered with `--skip-tasks` and a fixed project name for determinism; `.copier-answers.yml` is excluded (its `_commit`/`_src_path` vary by ref and source). Regenerate with `scripts/snapshot.py update`. Full-tree snapshots remain an option if richer per-PR content diffs are wanted later.
