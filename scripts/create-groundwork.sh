@@ -37,9 +37,12 @@ fi
 
 # 2) Generate. --trust is required because the template runs post-copy tasks
 #    (git init, slug substitution). Extra args are forwarded to copier.
+#    "${EXTRA[@]+...}" guards the empty-array expansion: under `set -u`, a bare
+#    "${EXTRA[@]}" on an empty array is an unbound-variable error on bash < 4.4
+#    (macOS ships bash 3.2), which is exactly the no-extra-args quickest-start.
 note ""
 note "Generating with Copier ..."
-uvx copier copy --trust "${EXTRA[@]}" "$SRC" "$DEST"
+uvx copier copy --trust "${EXTRA[@]+"${EXTRA[@]}"}" "$SRC" "$DEST"
 
 # 3) Report the assigned scaffold and offer the first run.
 scaffold="$(grep -E '^project_type:' "$DEST/.copier-answers.yml" 2>/dev/null | awk '{print $2}' || true)"
