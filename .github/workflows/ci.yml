@@ -152,7 +152,13 @@ jobs:
         scaffold: [web, mobile, desktop, hybrid, core]
     steps:
       - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
-      - run: git config --global user.email ci@groundwork.local && git config --global user.name "groundwork CI"
+      - run: |
+          git config --global user.email ci@groundwork.local
+          git config --global user.name "groundwork CI"
+          # Stop background git gc/maintenance from racing copier's temp-dir
+          # cleanup (intermittent OSError [Errno 39] Directory not empty: '.git').
+          git config --global gc.auto 0
+          git config --global maintenance.auto false
       - name: scaffold at ${{ matrix.from }}, edit a user file, update to this PR, assert
         run: |
           set -euo pipefail
