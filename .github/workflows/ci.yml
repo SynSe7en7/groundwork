@@ -223,3 +223,71 @@ jobs:
         env:
           COPIER_CMD: uvx copier@9.16.0
         run: python3 scripts/snapshot.py check
+
+  # Option-combination matrix: render representative NON-default toggle combos
+  # (not just --defaults) and assert the gated surfaces track the toggles, so a
+  # template bug on an untested option path is caught before a user hits it.
+  option-matrix:
+    name: options (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: web-no-supabase
+            ptype: web
+            data: --data use_supabase=false
+            supabase: "no"
+            modal: "skip"
+          - name: web-modal
+            ptype: web
+            data: --data use_modal=true
+            supabase: "yes"
+            modal: "yes"
+          - name: web-no-ui
+            ptype: web
+            data: --data has_ui=false
+            supabase: "yes"
+            modal: "no"
+          - name: web-single-env
+            ptype: web
+            data: --data include_two_env_discipline=false
+            supabase: "yes"
+            modal: "no"
+          - name: web-minimal
+            ptype: web
+            data: --data use_supabase=false --data use_modal=false --data has_ui=false --data include_two_env_discipline=false --data use_vercel=false
+            supabase: "no"
+            modal: "no"
+          - name: desktop-no-supabase
+            ptype: desktop
+            data: --data use_supabase=false
+            supabase: "no"
+            modal: "skip"
+          - name: mobile-marketing
+            ptype: mobile
+            data: --data target_web=false --data marketing_site=true
+            supabase: "yes"
+            modal: "skip"
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+      - run: git config --global user.email ci@groundwork.local && git config --global user.name "groundwork CI"
+      - name: render combo and assert toggle gating
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          uvx copier copy --defaults --trust --skip-tasks --vcs-ref HEAD \
+            --data project_type=${{ matrix.ptype }} --data project_name="OM" \
+            ${{ matrix.data }} . "$out"
+          test -f "$out/AGENTS.md" || { echo "AGENTS.md missing"; exit 1; }
+          test -f "$out/docs/GATES.md" || { echo "GATES.md missing"; exit 1; }
+          case "${{ matrix.supabase }}" in
+            yes) test -d "$out/supabase"  || { echo "FAIL: supabase/ expected present"; exit 1; } ;;
+            no)  test ! -d "$out/supabase" || { echo "FAIL: supabase/ should be absent"; exit 1; } ;;
+          esac
+          case "${{ matrix.modal }}" in
+            yes) test -d "$out/${{ matrix.ptype }}/lib/modal"  || { echo "FAIL: lib/modal expected present"; exit 1; } ;;
+            no)  test ! -d "$out/${{ matrix.ptype }}/lib/modal" || { echo "FAIL: lib/modal should be absent"; exit 1; } ;;
+          esac
+          echo "combo ${{ matrix.name }} OK"
