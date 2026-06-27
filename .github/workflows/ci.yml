@@ -121,8 +121,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libssl-dev
       - run: git config --global user.email ci@groundwork.local && git config --global user.name "groundwork CI"
-      - run: echo "OUT=$(mktemp -d)" >> "$GITHUB_ENV"
+      # Stable render path (not mktemp) so rust-cache can key on a fixed workspace.
+      - run: echo "OUT=$RUNNER_TEMP/ci-desktop" >> "$GITHUB_ENV"
       - run: uvx copier copy --defaults --trust --skip-tasks --vcs-ref HEAD --data project_type=desktop --data project_name="CI Desktop" . "$OUT"
+      # Cache the Rust target keyed on the committed Cargo.lock, so the Tauri build
+      # (the CI long pole) reuses compiled crates across runs. Runs after render so
+      # Cargo.lock exists for the cache key.
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: ${{ runner.temp }}/ci-desktop/desktop/src-tauri -> target
       - name: install + frontend verify
         working-directory: ${{ env.OUT }}/desktop
         run: |

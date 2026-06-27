@@ -116,12 +116,14 @@ The high-leverage move. Two halves; 1a underpins 1b.
   phase-to-version labels in this roadmap are indicative, not release gates;
   Phase 0's work rolls into the next minor (v0.4.0). `MIGRATING.md` on the first
   major remains to add.
-- Keep all four scaffolds building on every change (no scaffold is demoted). Make
-  CI fast with dependency caching (npm, pnpm, cargo), a per-scaffold matrix, and
-  parallel jobs. If the full multi-OS desktop release build is too slow for every
-  PR, it may ALSO run nightly and on a release label, but the per-PR desktop
-  frontend build plus a single-target Tauri compile stays, so all four scaffolds
-  keep per-change coverage.
+- Keep all four scaffolds building on every change (no scaffold is demoted). The
+  per-scaffold matrix and parallel jobs are in place; the desktop Tauri Rust build
+  (the CI long pole) is now cached via rust-cache keyed on the committed
+  `Cargo.lock`. npm/pnpm download caching is a marginal further optimization (the
+  Rust compile dominates) and remains optional. If the full multi-OS desktop
+  release build ever becomes too slow for every PR, it may ALSO run nightly and on
+  a release label, but the per-PR single-target Tauri compile stays so all four
+  scaffolds keep per-change coverage.
 
 ### 1b. Make the update channel a first-class product
 
