@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.9.2](https://github.com/SynSe7en7/groundwork/compare/v0.9.1...v0.9.2) (2026-06-27)
+
+
+### Bug Fixes
+
+* **ci:** generated-project CI runs in the app dir; real hybrid type-check gate ([#40](https://github.com/SynSe7en7/groundwork/issues/40)) ([c2d44b1](https://github.com/SynSe7en7/groundwork/commit/c2d44b19a803b8c3228e6f73598b6830fa1750d0))
+* **create-groundwork:** guard empty-array expansion for bash 3.2 (macOS) ([#42](https://github.com/SynSe7en7/groundwork/issues/42)) ([172e0c0](https://github.com/SynSe7en7/groundwork/commit/172e0c0d1893931305fcf228c8327e1688f814ab))
+
+
+### Documentation
+
+* correct overclaims (count-agnostic CI metric, SLSA L2, 1-of-1 instance, mobile stack); SBOM single-upload ([#43](https://github.com/SynSe7en7/groundwork/issues/43)) ([3247711](https://github.com/SynSe7en7/groundwork/commit/3247711b64a846fba365e8f2a52247abd7f68c16))
+
 ## [0.9.1](https://github.com/SynSe7en7/groundwork/compare/v0.9.0...v0.9.1) (2026-06-27)
 
 
