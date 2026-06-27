@@ -15,7 +15,10 @@ The immediate next work is the world-class roadmap: start at Phase 0 (quick
 security hardening, v0.3.1) and Phase 1a (make the foundation testable), then
 Phase 1b (the governed-update channel as the headline product). The strategic
 through-line: the moat is governed updates across a fleet of aligned projects,
-not the presets. Invest there.
+and that is where to invest. Scaffold model (see the roadmap): all four scaffolds
+(web, mobile, desktop, hybrid) stay first-class at the foundation; discovery
+assigns one to each project and that project then rides only its assigned
+scaffold. No scaffold is ever demoted.
 
 ## What groundwork is (architecture you must know)
 
@@ -144,12 +147,14 @@ Release ladder, moat-first:
 - **v0.3.1 Phase 0** (quick, no deps): SHA-pin all GitHub Actions (the desktop
   `release.yml` is worst case: floating `tauri-action@v0` holds the signing
   secrets), add secret-scanning (gitleaks) to generated CI, commit lockfiles +
-  frozen installs, add SECURITY.md. **Pull forward: demote desktop+hybrid to
-  render-only in CI** to cut cost now.
+  frozen installs, add SECURITY.md. (Lockfiles are the one open Phase 0 item:
+  package.json is `.jinja` with a templated name, so a committed lockfile needs
+  care, and pnpm is needed for the hybrid lock.)
 - **v0.4.0 Phase 1** (the headline): 1a make the foundation testable (golden
-  snapshots, option-combination matrix, every-prior-version + core-overlay update
-  tests, content-validating lint, release automation via changesets, rebalanced
-  CI); 1b update-as-product (`just doctor` for prereqs+drift,
+  snapshots, option-combination matrix, every-prior-version update tests across
+  all four scaffolds + core overlay, content-validating lint, release automation
+  via changesets, CI sped up with caching + a per-scaffold matrix, NO scaffold
+  demoted); 1b update-as-product (`just doctor` for prereqs+drift,
   `foundation-update --preview`, Renovate copier manager in spawned projects +
   on the foundation, scheduled drift signal, README repositioned around governed
   updates, the pull-up `harvest` path that promotes a proven pattern back into the
