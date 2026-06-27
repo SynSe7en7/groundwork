@@ -101,7 +101,9 @@ The high-leverage move. Two halves; 1a underpins 1b.
   clobbered. SHIPPED: the `update-matrix` CI job covers all 15 version x scaffold
   cells (was: one hop, web only).
 - Content-validating lint: a loop's `exit` declares four concrete stops (not
-  `TBD`); a gate marked ratified has an artifact whose status is accepted.
+  `TBD`); a gate marked ratified names a real artifact. SHIPPED in
+  `scripts/lint_skills_loops.py`. The deeper ratified-gate-artifact-status=accepted
+  cross-check rides with the Phase 2 gate enforcement.
 - Release engineering: adopt changesets or release-please for a generated
   `CHANGELOG.md`, GitHub Releases per tag, and a `MIGRATING.md` on majors.
 - Keep all four scaffolds building on every change (no scaffold is demoted). Make
