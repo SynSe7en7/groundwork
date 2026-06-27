@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://github.com/SynSe7en7/groundwork/compare/v0.8.0...v0.9.0) (2026-06-27)
+
+
+### Features
+
+* **adoption:** create-groundwork wrapper, first-run setup, web deploy preview ([#36](https://github.com/SynSe7en7/groundwork/issues/36)) ([cbb0c9c](https://github.com/SynSe7en7/groundwork/commit/cbb0c9ccd090cf071f5120974c5688ab3fddab90))
+
+
+### Documentation
+
+* add CONTRIBUTING + README positioning (Phase 3 adoption) ([#34](https://github.com/SynSe7en7/groundwork/issues/34)) ([19b1c77](https://github.com/SynSe7en7/groundwork/commit/19b1c7774e3f2a11e7ae5d65e2f75c69d0e751b6))
+
 ## [0.8.0](https://github.com/SynSe7en7/groundwork/compare/v0.7.1...v0.8.0) (2026-06-27)
 
 
