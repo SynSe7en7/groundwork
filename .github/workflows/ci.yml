@@ -193,11 +193,12 @@ jobs:
           echo "OK: ${{ matrix.from }} -> HEAD (${{ matrix.scaffold }}) propagated cleanly"
 
   lint-skills-loops:
-    name: skills and loops are well-formed
+    name: skills, loops, and ADRs are well-formed
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - run: python3 scripts/lint_skills_loops.py
+      - run: python3 scripts/check_adrs.py
 
   secret-scan:
     name: secret scan (gitleaks)
