@@ -1,12 +1,44 @@
 # World-Class Roadmap
 
-Status: proposed. Drafted 2026-06-25 from the seven-dimension review.
+Status: revised 2026-06-26 to carry the scaffold model (all four scaffolds are
+first-class at the foundation; each project rides only its assigned scaffold).
+Originally drafted 2026-06-25 from the seven-dimension review.
 
-The path from a good foundation builder to a world-class one. The review was
-consistent: groundwork is over-invested in the replicable surface (four presets,
-full desktop and hybrid builds in CI) and under-invested in its actual moat
-(governed updates across a fleet of aligned projects). This roadmap rebalances
-toward the moat and makes every claim CI-enforced.
+The path from a good foundation builder to a world-class one. The review found
+the moat (governed updates across a fleet of aligned projects) under-built and
+buried beneath the scaffolds in the README. This roadmap invests in the moat and
+makes every claim CI-enforced, while keeping all four scaffolds (web, mobile,
+desktop, hybrid) first-class. The four scaffolds are the product surface, not
+over-investment: discovery assigns one to each project, so any of them must be
+ready and proven at all times.
+
+## The scaffold model (read this first)
+
+groundwork supports four scaffolds: web, mobile, desktop, and hybrid (web and
+mobile sharing code). They are first-class and equally maintained. The model has
+two levels, and the rest of this roadmap depends on the distinction.
+
+- Foundation level: groundwork builds, tests, and maintains all four scaffolds to
+  the same bar at all times. Discovery can assign any of them to a new project, so
+  a weak scaffold means a weak project. No scaffold is ever demoted, deprecated,
+  or marked experimental to save effort.
+- Project level: a new project starts with no scaffold. groundwork and the project
+  runner uncover its requirements during framing and scope (the discovery step),
+  and discovery assigns the scaffold (sometimes more than one) that fits. From then
+  on the project carries only its assigned scaffold for every later step (build,
+  test, update, deploy), unless an explicit, deliberate scaffold change is made. A
+  web project never compiles a desktop binary.
+
+Consequence for cost: the foundation pays the cost of proving four scaffolds
+(handled with dependency caching and a per-scaffold CI matrix). Each project pays
+the cost of exactly one. The "earn it from two real projects" rule never applies
+to the existing four; it applies only to adding a brand-new fifth scaffold type.
+
+A near-term capability this implies: scaffold assignment should be an output of
+discovery, not a manual upfront pick. Today the template asks for `project_type`
+as an answer; the world-class version recommends and records the scaffold from the
+uncovered requirements (and supports an explicit, recorded scaffold change later).
+Tracked under Phase 1b positioning and Phase 4 conditional shipping.
 
 ## Thesis (the 10x bet, named)
 
@@ -19,16 +51,18 @@ intersection is the white space.
 
 The bet, in one line: one governed foundation that lets a solo builder run a
 fleet of aligned projects that all stay current. Every phase below serves that
-bet. The headline is the governed-update channel, not the presets.
+bet. The headline is the governed-update channel, not the scaffolds.
 
 ## Operating principles
 
-- Earn each capability from a real consuming project (the two-real-instances
-  rule). Demand-gate the at-scale work.
+- Earn each NEW capability or NEW scaffold type from a real consuming project (the
+  two-real-instances rule). Demand-gate the at-scale work. The four existing
+  scaffolds are already earned and stay first-class.
 - Dogfood: the foundation runs on the discipline it ships.
 - CI-enforce every claim. If a property is not tested, it is not a feature.
-- Spend the verification budget where breakage hurts: the consumed surface and
-  the governance spine, not presets no project uses.
+- Spend the verification budget where breakage hurts: prove all four scaffolds and
+  the governance spine. Speed CI with caching and a per-scaffold matrix, never by
+  dropping a scaffold's coverage.
 
 ## Phase 0: quick high-stakes hardening (v0.3.1, days)
 
@@ -38,8 +72,9 @@ Low effort, high stakes, no dependencies. Ship first.
   starting with the desktop `release.yml` (it runs a floating `tauri-action@v0`
   in the step that holds the updater key and the Apple signing secrets).
 - Add a secret-scanning job (gitleaks) to the generated CI so a leaked key fails
-  the PR. Prevention plus detection, not prevention alone.
-- Commit lockfiles per preset and switch CI installs to the frozen path
+  the PR, and to the foundation CI itself. Prevention plus detection, not
+  prevention alone.
+- Commit lockfiles per scaffold and switch CI installs to the frozen path
   (`npm ci`, `pnpm install --frozen-lockfile`).
 - Add `SECURITY.md`.
 
@@ -52,23 +87,28 @@ The high-leverage move. Two halves; 1a underpins 1b.
 
 ### 1a. Treat the foundation as software under test
 
-- Golden-output snapshot tests: commit a full rendered tree per preset, diff in
-  CI, so generated content drift is a reviewable failure (today CI checks file
-  presence, not content). Use the `pytest-copier` pattern.
+- Golden-output snapshot tests: commit a full rendered tree per scaffold (all four)
+  plus the core overlay, diff in CI, so generated content drift is a reviewable
+  failure (today CI checks file presence, not content). Use the maintained
+  `pytest-copie` (12rambau), or a shell render-and-diff, not the stale
+  `pytest-copier` proof-of-concept.
 - Option-combination matrix: render and verify representative toggle combinations
   (use_supabase, use_modal, has_ui, two-env x project_type), not just
-  `--defaults` per preset.
+  `--defaults` per scaffold.
 - Every-prior-version update tests: `copier update` from v0.1.0, v0.2.0, v0.3.0
-  to HEAD, across the web preset and the core overlay, asserting governance
-  propagates and user-owned files are never clobbered (today: one hop, web only,
-  PR-only).
+  to HEAD, across all four scaffolds (web, mobile, desktop, hybrid) and the core
+  overlay, asserting governance propagates and user-owned files are never
+  clobbered (today: one hop, web only, PR-only).
 - Content-validating lint: a loop's `exit` declares four concrete stops (not
   `TBD`); a gate marked ratified has an artifact whose status is accepted.
 - Release engineering: adopt changesets or release-please for a generated
   `CHANGELOG.md`, GitHub Releases per tag, and a `MIGRATING.md` on majors.
-- Rebalance CI: move the full Tauri Rust build and the pnpm hybrid build to
-  nightly or label-triggered; PR CI runs the consumed surface, the governance
-  spine, and the update sentinel.
+- Keep all four scaffolds building on every change (no scaffold is demoted). Make
+  CI fast with dependency caching (npm, pnpm, cargo), a per-scaffold matrix, and
+  parallel jobs. If the full multi-OS desktop release build is too slow for every
+  PR, it may ALSO run nightly and on a release label, but the per-PR desktop
+  frontend build plus a single-target Tauri compile stays, so all four scaffolds
+  keep per-change coverage.
 
 ### 1b. Make the update channel a first-class product
 
@@ -78,19 +118,25 @@ The high-leverage move. Two halves; 1a underpins 1b.
   applying.
 - Ship a `renovate.json` in spawned projects using Renovate's first-class
   `copier` manager (auto-opens `copier update` PRs), and run Renovate or
-  Dependabot on the foundation itself.
+  Dependabot on the foundation itself. Acceptance is that the auto-opened PR
+  actually contains the rendered copier diff (see execution notes); ship a cron
+  `copier update --pretend` that opens an issue as the default fallback.
 - Scheduled float-build (cron) that flags when the pinned matrix has drifted out
-  from under the presets, before users hit it.
-- Reposition: the README leads with the governed-update value; the moat is the
-  headline, not a footnote below the spin-up paths.
+  from under the scaffolds, before users hit it.
+- Reposition: the README leads with the governed-update value, and surfaces that
+  discovery assigns the scaffold; the moat is the headline, not a footnote below
+  the spin-up paths.
 - The pull-up harvest path: a `harvest` skill plus a `HARVEST.md` ritual that
   promotes a battle-tested pattern, skill, or ADR from a real spawned project
   back into the foundation, gated by the two-real-instances bar. This closes the
   compounding loop the charter promises (today it is push-down only).
 
-Acceptance: every prior version updates green in CI; golden snapshots diff on
-content change; `CHANGELOG` is generated; `just doctor` reports drift; one
-documented harvest round-trip from a real project into the foundation.
+Acceptance: every prior version updates green in CI across all four scaffolds;
+golden snapshots diff on content change; `CHANGELOG` is generated; `just doctor`
+reports drift. The harvest mechanism is built and demonstrated with a labeled
+dry-run now; the documented real harvest round-trip lands once a second project,
+generated from groundwork and tracked via a committed `.copier-answers.yml`,
+exists.
 
 ## Phase 2: governance teeth + security depth (v0.5.0)
 
@@ -117,7 +163,7 @@ This category wins on proof, not feature lists.
 
 - A branded entry point: `create-groundwork` (npx) or a memorable wrapper that
   runs doctor, then copier, then the first run.
-- A real one-command deployed preview for the web preset (a wired `just deploy`
+- A real one-command deployed preview for the web scaffold (a wired `just deploy`
   and a Vercel deploy path, not placeholder commands).
 - Foreground the first run: after scaffold, offer to install deps and start the
   dev server or run `just verify`.
@@ -134,17 +180,20 @@ positioning paragraph is in the README.
 
 ## Phase 4+: at-scale architecture (v0.7.0+, demand-gated)
 
-Build only when a second and third real project exist.
+Build only when a second and third real project exist. This phase is gated on new
+demand; it never reaches back to weaken the four existing scaffolds.
 
 - Factor the duplicated primitives (the Supabase client, EnvBadge, the
   `/api/health` contract) into a shared layer, with a CI invariant that the
-  per-preset contracts agree.
-- A non-JS backend preset (Python/FastAPI or Go) proving the spine generalizes
-  past the TypeScript family, with a pluggable `verify`.
-- A preset/skill registry seam (manifest-driven) so a new surface is additive,
+  per-scaffold contracts agree.
+- A non-JS backend scaffold (Python/FastAPI or Go) proving the spine generalizes
+  past the TypeScript family, with a pluggable `verify`. This is a NEW scaffold
+  type, so it is the one subject to the two-real-instances rule.
+- A scaffold/skill registry seam (manifest-driven) so a new surface is additive,
   not a core edit plus a hand-named conditional directory.
 - Conditional skill and loop shipping from `.copier-answers.yml` plus VISION
-  inference (today they ship unconditionally).
+  inference, and discovery-driven scaffold assignment (today `project_type` is a
+  manual answer and skills/loops ship unconditionally).
 - The stage-3 feature-delivery orchestrator and roadmap-review loops, and the
   evaluator-optimizer loop.
 - Fleet-scale governance: versioned GATES and LOOPS schemas with a migration
@@ -156,9 +205,11 @@ Build only when a second and third real project exist.
 
 - No marketplace, no workflow DSL, no agent hierarchies, no telemetry
   infrastructure, no large speculative skill library.
-- Do not add presets speculatively. As part of the Phase 1 rebalance, demote
-  desktop and hybrid to render-only and experimental in CI until a real project
-  consumes them.
+- Do not add a NEW (fifth) scaffold speculatively; a new surface is earned by the
+  two-real-instances rule. The four existing scaffolds (web, mobile, desktop,
+  hybrid) are first-class and stay equally build-verified on every change. Never
+  demote, deprecate, or mark any of them experimental to save CI cost; reduce cost
+  with caching and a per-scaffold matrix instead.
 
 ## Sequencing rationale
 
@@ -170,27 +221,43 @@ reuses the content-validating lint from 1a. Phase 3 is adoption, which is only
 worth doing once the product underneath is trustworthy. Phase 4 is demand-gated
 on real projects.
 
+Guard: no item lands in CI before the test, lint, or build-coverage control it
+relies on is green, and a change that moves coverage ships with its replacement in
+the same change. At solo, single-instance scale this is a one-line discipline, not
+enforcement machinery.
+
 ## Execution notes (improvements for the implementing agent)
 
 These sharpen the plan; apply them as you build.
 
 - Lead with a tracer-bullet slice, not all of Phase 1a at once. The thinnest
-  end-to-end proof of the moat is: (1) the every-prior-version `copier update`
-  test (v0.1/v0.2/v0.3 to HEAD, web plus core overlay) and (2) one real harvest
-  round-trip. Ship that first; it proves the bet and de-risks the rest.
-- Dogfood the foundation's own loops: build each item test-first. Write the CI
-  assertion for the property (it fails red), then implement until green. This is
-  the plan-execute-verify and tdd loops applied to the foundation itself, and it
-  makes "CI-enforce every claim" literal.
-- Pull one rebalance into Phase 0: demote desktop and hybrid to render-only in
-  CI now (a quick `.github/workflows/ci.yml` edit). It immediately cuts CI cost
-  and matches the two-real-instances rule, ahead of the fuller Phase 1 rebalance.
-- Verify before relying: Renovate's `copier` manager maturity (fallback: a small
-  cron job that runs `copier update --pretend` and opens an issue); `pytest-copier`
-  vs a shell render-and-diff fallback for golden snapshots; and pick the release
-  tool deliberately (changesets suits this single-repo case; release-please is the
-  alternative). Record the choice in DECISIONS.md.
+  buildable proof of the moat is the every-prior-version `copier update` test
+  (v0.1/v0.2/v0.3 to HEAD, across all four scaffolds and the core overlay). Ship
+  that first; it proves the bet and is buildable now by generalizing the existing
+  single-hop sentinel. The real harvest round-trip is the second half of the
+  proof, but it waits on a second project generated from groundwork (see 1b);
+  build the harvest mechanism now and demonstrate it with a labeled dry-run.
+- Dogfood the foundation's own loops: for each item that asserts a behavioral or
+  structural property (renders, builds, propagates, lints, reports drift, enforces
+  a gate), write the failing CI check first, then implement until green. This is
+  the plan-execute-verify and tdd loops applied to the foundation, and it makes
+  "CI-enforce every claim" literal. Prose, decision, and presence-only deliverables
+  (SECURITY.md, README repositioning, the release-tool choice, CONTRIBUTING) are
+  exempt.
+- Verify before relying. For golden snapshots use the maintained `pytest-copie`
+  (12rambau), not the stale `pytest-copier` proof-of-concept (a shell
+  render-and-diff is an equally fine fallback). For Renovate's `copier` manager,
+  the acceptance test is that the auto-opened PR actually contains the rendered
+  copier diff (there are open reports of empty update PRs), so verify it on a
+  throwaway repo and keep the cron `copier update --pretend` plus open-issue
+  fallback as the default until it passes. Pick the release tool deliberately
+  (changesets suits this single-repo case; release-please is the alternative) and
+  record the choice in DECISIONS.md.
 - North star for "world-class," made measurable: a fleet of real projects all
   sitting on the latest foundation tag with zero manual update steps, and every
-  foundation claim backed by a CI check. Track the count of projects-on-latest as
-  the headline metric once a second project exists.
+  foundation claim backed by a CI check. The projects-on-latest count needs at
+  least one project that is a tracked instance (a committed `.copier-answers.yml`
+  on a released tag), so add that conversion step before invoking the metric.
+  Until a second tracked instance exists, use "percent of foundation claims backed
+  by a green CI check" as the interim metric, which is measurable today. No
+  fleet-tracking or telemetry infrastructure (that is a non-goal).
