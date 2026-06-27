@@ -8,17 +8,26 @@
 
 `groundwork` is a model-agnostic, Copier-based project-foundation builder with a
 governed-update channel. Public at `github.com/SynSe7en7/groundwork`, local clone
-`~/Dev/groundwork`. It is **shipped through v0.7.0**, CI all green, main clean.
+`~/Dev/groundwork`. It is **shipped through v0.8.0**, CI all green, main clean.
+**Phase 2 is complete (6 of 6).**
 
-This session executed the World-Class Roadmap from v0.3.0 to v0.7.0:
+This session executed the World-Class Roadmap from v0.3.0 to v0.8.0:
 - **v0.4.0** — Phase 0 (security hardening) + Phase 1a (the foundation as software
   under test).
 - **v0.5.0** — Phase 1b (the governed-update channel as a product).
 - **v0.6.0** — Phase 2 governance/security teeth (4 of 6 items).
 - **v0.7.0** — Phase 2 spec-kit parity (the 5th item).
+- **v0.8.0** — Phase 2 build provenance + SBOM (the 6th item; wired, verification
+  deferred to a real desktop release). Phase 2 done.
 
-**The immediate next work**: Phase 3 (adoption) and Phase 4 (demand-gated). The
-last Phase 2 item, **build provenance + SBOM for the desktop binaries**, is now
+**The immediate next work**: Phase 3 (adoption) is underway. Shipped so far:
+`CONTRIBUTING.md` and the README positioning paragraph + "Why groundwork" section
+(the two prose acceptance criteria). Remaining Phase 3: the `create-groundwork`
+entry point, a one-command web deploy preview, foregrounding the first run, and a
+runnable example + transcript (these win the "a new user reaches a live URL in
+minutes" acceptance and several carry real design forks — entry-point delivery,
+the Vercel deploy path, and where the example lives). Then Phase 4 (demand-gated).
+The last Phase 2 item, **build provenance + SBOM for the desktop binaries**, is
 **wired** into the desktop `release.yml` (provenance per matrix leg + an SPDX
 SBOM); its verification is deferred to the first real desktop release because it
 only runs on a real `v*` tag (see "What remains"). The roadmap marks every
