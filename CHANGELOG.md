@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.0](https://github.com/SynSe7en7/groundwork/compare/v0.5.0...v0.6.0) (2026-06-27)
+
+
+### Features
+
+* ADR integrity check (index + status + supersession) ([#25](https://github.com/SynSe7en7/groundwork/issues/25)) ([c84d085](https://github.com/SynSe7en7/groundwork/commit/c84d085dc1e4ab2096dd2b38c6f91d2ac513266f))
+* enforce alignment gates in generated projects ([#23](https://github.com/SynSe7en7/groundwork/issues/23)) ([e97f943](https://github.com/SynSe7en7/groundwork/commit/e97f943459ae0aca9a396684cb0be7240d3daf8e))
+* harden the run-heavy Modal edge function ([#27](https://github.com/SynSe7en7/groundwork/issues/27)) ([77fc6d8](https://github.com/SynSe7en7/groundwork/commit/77fc6d8be72eb3d4a6cc4d74201e6228818901df))
+* ship Dependabot + CodeQL into generated projects ([#26](https://github.com/SynSe7en7/groundwork/issues/26)) ([d311fdc](https://github.com/SynSe7en7/groundwork/commit/d311fdce489354e9a2bb23e29a9978878d1aab7f))
+
 ## [0.5.0](https://github.com/SynSe7en7/groundwork/compare/v0.4.0...v0.5.0) (2026-06-27)
 
 
