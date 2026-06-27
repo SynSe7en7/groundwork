@@ -93,9 +93,11 @@ The high-leverage move. Two halves; 1a underpins 1b.
   content drift is a reviewable failure (CI previously checked file presence, not
   content). Implemented stdlib-only (no `pytest-copie` dependency); full-tree
   snapshots or `pytest-copie` remain an option if richer per-PR diffs are wanted.
-- Option-combination matrix: render and verify representative toggle combinations
-  (use_supabase, use_modal, has_ui, two-env x project_type), not just
-  `--defaults` per scaffold.
+- Option-combination matrix: SHIPPED. The `option-matrix` CI job renders seven
+  representative non-default combinations (use_supabase, use_modal, has_ui,
+  two-env, marketing across web/desktop/mobile) and asserts the gated surfaces
+  (supabase/, the modal seam) track the toggles, not just `--defaults` per
+  scaffold.
 - Every-prior-version update tests: `copier update` from v0.1.0, v0.2.0, v0.3.0
   to HEAD, across all four scaffolds (web, mobile, desktop, hybrid) and the core
   overlay, asserting governance propagates and user-owned files are never
