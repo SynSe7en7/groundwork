@@ -51,6 +51,7 @@ a routine dependency bump within an already-decided stack), and say why.
 | PRD / Plan | not-started | `docs/prd/`, `docs/plan/` | YYYY-MM-DD |
 | Design theme | not-started | `DESIGN.md` | YYYY-MM-DD |
 | Deployment & Security | not-started | `docs/SECURITY_CHECKLIST.md`, `docs/DEPLOY.md`, `docs/ENVIRONMENTS.md` | YYYY-MM-DD |
+| Clarify (assumptions) | not-started | `docs/clarify/` | YYYY-MM-DD |
 
 ## How to update
 
@@ -130,3 +131,18 @@ writes.
   neither secrets, data-access policy, nor the deploy path. The security checklist
   itself is never exempt at a prod-promotion gate.
 - Artifact: `docs/SECURITY_CHECKLIST.md`, `docs/DEPLOY.md`, `docs/ENVIRONMENTS.md`.
+
+### 6. Clarify (assumptions ledger, just-in-time)
+
+- Trigger: after the PRD and before the Plan, for non-trivial work. Resolve the
+  underspecified parts before planning commits to an approach.
+- Key questions: What must be true for this to work (the load-bearing
+  assumptions)? What is still unknown, and which unknowns block planning? What is
+  explicitly deferred, and to when? Which of the PRD's open questions are now
+  answered, and how?
+- Triviality exemption: work with no material unknowns, or a change small enough
+  that the PRD/Plan gate itself was exempt.
+- Artifact: `docs/clarify/<slug>.md`, copied from `docs/clarify/_TEMPLATE.md`.
+- Pair with the `analyze` skill: a cross-artifact consistency pass (CHARTER vs
+  VISION vs PRD vs plan) run before the Plan ratifies, to catch contradictions and
+  drift the clarify ledger should reconcile.

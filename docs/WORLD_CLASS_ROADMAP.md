@@ -174,9 +174,11 @@ exists.
   carries `gate-exempt: <key>`. Converts the advisory tripwires to enforced gates;
   decision in `docs/adr/0001-enforce-alignment-gates.md`. Verified against
   block/pass/ratify/exempt scenarios.
-- Discovery parity with spec-kit: a clarify gate (a ratified assumption ledger
-  before planning) and an analyze pass (cross-artifact consistency: CHARTER vs
-  VISION vs PRD).
+- Discovery parity with spec-kit: SHIPPED. A `Clarify (assumptions)` gate in
+  `GATES.md` (run by the existing `run-gate` skill) with a `docs/clarify/`
+  assumptions-ledger template, and an `analyze` skill that cross-checks the
+  committed artifacts (CHARTER vs VISION vs PRD vs plan, DECISIONS, ADRs) and
+  reports contradictions, drift, and gaps without rewriting them.
 - ADR integrity: SHIPPED (index + status + supersession). `docs/adr/README.md` is
   the index, and `scripts/check_adrs.py` (in the foundation CI lint job) enforces
   that every ADR has a valid status, is listed in the index with a matching status,
