@@ -1,0 +1,22 @@
+name: release-please
+
+# Maintains a release PR built from conventional commits (feat -> minor,
+# fix -> patch, breaking -> minor while pre-1.0). Merging that PR cuts the tag,
+# publishes the GitHub Release, and updates CHANGELOG.md. Versioning is
+# commit-driven; the roadmap's phase-to-version labels are indicative, not gates.
+# Config: release-please-config.json + .release-please-manifest.json (baseline 0.3.0).
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # v4
