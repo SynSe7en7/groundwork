@@ -19,8 +19,8 @@ jobs:
     name: typecheck / lint / build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: npm
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
 
@@ -94,3 +94,18 @@ jobs:
             echo "Lock the design first, or note in the PR why building UI ahead of it is intentional."
           } >> "$GITHUB_STEP_SUMMARY"
           exit 0
+
+  # Hard gate: a committed secret fails the PR. Pinned gitleaks binary, no license
+  # needed (works in private repos too).
+  secret-scan:
+    name: secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Run gitleaks
+        run: |
+          set -euo pipefail
+          VERSION=8.30.1
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" \
+            | tar -xz gitleaks
+          ./gitleaks dir . --redact --no-banner
