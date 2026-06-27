@@ -94,7 +94,7 @@ test:
 lint:
     pnpm lint
 typecheck:
-    pnpm -r typecheck
+    pnpm -r run type-check
 test:
     pnpm -r run test
 [% elif project_type == 'core' %]

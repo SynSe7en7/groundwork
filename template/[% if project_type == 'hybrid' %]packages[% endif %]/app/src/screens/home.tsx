@@ -10,12 +10,12 @@ export function HomeScreen() {
   const aboutLink = useLink({ href: '/about' })
 
   return (
-    <YStack flex={1} justifyContent="center" alignItems="center" padding="$6" gap="$4">
-      <XStack position="absolute" top="$4" right="$4">
+    <YStack flex={1} justify="center" items="center" p="$6" gap="$4">
+      <XStack position="absolute" t="$4" r="$4">
         <EnvBadge />
       </XStack>
-      <H1 textAlign="center">Welcome</H1>
-      <Paragraph textAlign="center" maxWidth={420} opacity={0.8}>
+      <H1 text="center">Welcome</H1>
+      <Paragraph text="center" maxW={420} opacity={0.8}>
         This screen is shared by the web and native apps. Edit it once in
         packages/app and both surfaces update.
       </Paragraph>

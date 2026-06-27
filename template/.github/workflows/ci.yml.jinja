@@ -14,26 +14,47 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Hard gate: code must typecheck, lint, and build.
+[% if project_type != 'core' %]
+  # Hard gate: the app must install, typecheck, lint, and build. This scaffold
+  # keeps its package manifest and lockfile under its own app directory, so the
+  # job runs there (a root-level npm install would find no lockfile).
   build:
     name: typecheck / lint / build
     runs-on: ubuntu-latest
+[% if project_type == 'hybrid' %]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20
+      - run: corepack enable
+      - name: Install and type-check the pnpm workspace
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm -r run type-check
+[% else %]
+    defaults:
+      run:
+        working-directory: [[ project_type ]]
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: npm
-      # Each step no-ops cleanly if the script is absent, so one workflow serves
-      # web, mobile, desktop, and hybrid spawns without edits.
+          cache-dependency-path: [[ project_type ]]/package-lock.json
       - name: Install
-        run: npm ci || npm install
+        run: npm ci
       - name: Typecheck
         run: npm run typecheck --if-present
+[% if project_type != 'mobile' %]
       - name: Lint
         run: npm run lint --if-present
       - name: Build
         run: npm run build --if-present
+[% endif %]
+[% endif %]
+[% endif %]
 
   # Enforced alignment gates (was the advisory tripwires). Maps the PR diff to the
   # gates it triggers (Stack via dependency manifests, Design via a new UI surface,

@@ -101,7 +101,7 @@ jobs:
         run: |
           set -euo pipefail
           pnpm install --frozen-lockfile
-          pnpm -r typecheck
+          pnpm -r run type-check
 
   # Build gate: desktop frontend builds and typechecks, then the full Tauri build.
   build-desktop:
@@ -231,6 +231,10 @@ jobs:
         env:
           COPIER_CMD: uvx copier@9.16.0
         run: python3 scripts/snapshot.py check
+      - name: assert generated CI installs where each scaffold's lockfile lives
+        env:
+          COPIER_CMD: uvx copier@9.16.0
+        run: python3 scripts/check_generated_ci.py
 
   # Option-combination matrix: render representative NON-default toggle combos
   # (not just --defaults) and assert the gated surfaces track the toggles, so a
