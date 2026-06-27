@@ -142,10 +142,14 @@ The high-leverage move. Two halves; 1a underpins 1b.
 - Reposition: the README leads with the governed-update value, and surfaces that
   discovery assigns the scaffold; the moat is the headline, not a footnote below
   the spin-up paths.
-- The pull-up harvest path: a `harvest` skill plus a `HARVEST.md` ritual that
-  promotes a battle-tested pattern, skill, or ADR from a real spawned project
-  back into the foundation, gated by the two-real-instances bar. This closes the
-  compounding loop the charter promises (today it is push-down only).
+- The pull-up harvest path: SHIPPED (mechanism). A `harvest` skill
+  (`template/skills/harvest/`, shipped into projects) plus a foundation-root
+  `HARVEST.md` ritual that promote a battle-tested pattern, skill, loop, or ADR
+  from a real project back into the foundation, gated by the two-real-instances
+  bar, with the required CI coverage. This closes the compounding loop the charter
+  promises (previously push-down only). The first documented real round-trip waits
+  on a second project generated from groundwork (the current consumer was
+  hand-wired, not scaffolded), so there is nothing yet to round-trip for real.
 
 Acceptance: every prior version updates green in CI across all four scaffolds;
 golden snapshots diff on content change; `CHANGELOG` is generated; `just doctor`
