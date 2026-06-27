@@ -66,6 +66,20 @@ doctor:
 [% if project_type == 'hybrid' %]app_dir := "."[% endif %]
 [% if project_type == 'core' %]app_dir := "."[% endif %]
 
+# Install dependencies for this project's scaffold (the first-run step).
+[% if project_type == 'hybrid' %]
+setup:
+    pnpm install
+[% elif project_type == 'core' %]
+setup:
+    @echo "groundwork core overlay: install deps for this project's stack in the justfile."
+[% else %]
+setup:
+    cd {{app_dir}} && npm install
+[% endif %]
+
+# verify runs lint + typecheck + test. test is --if-present, so a fresh scaffold
+# passes out of the box and starts running tests the moment you add a test script.
 verify: lint typecheck test
     @echo "verify: OK"
 
@@ -75,14 +89,14 @@ lint:
 typecheck:
     cd {{app_dir}} && npx tsc --noEmit
 test:
-    cd {{app_dir}} && npm test
+    cd {{app_dir}} && npm run test --if-present
 [% elif project_type == 'hybrid' %]
 lint:
     pnpm lint
 typecheck:
     pnpm -r typecheck
 test:
-    pnpm -r test
+    pnpm -r run test
 [% elif project_type == 'core' %]
 lint:
     @echo "groundwork core overlay: set lint for this project's stack in the justfile."
@@ -96,7 +110,7 @@ lint:
 typecheck:
     cd {{app_dir}} && npm run typecheck
 test:
-    cd {{app_dir}} && npm test
+    cd {{app_dir}} && npm run test --if-present
 [% endif %]
 
 # --- Health: env self-identification (app_env / version / git_sha) -----------
@@ -107,12 +121,28 @@ health env="develop":
 
 # --- Deploy: ordered bring-up. Fill in real commands; keep the order. ---------
 
+[% if project_type == 'web' %]
+# One-command preview deploy to Vercel (prints a live preview URL). Needs the
+# Vercel CLI authenticated: run `npx vercel login` once, or set VERCEL_TOKEN. The
+# first run links the project (it asks scope + project name, then remembers them).
+deploy-preview:
+    cd {{app_dir}} && npx --yes vercel deploy
+
+# Production deploy, in order: backend first, then point the web env at the live
+# backend URL, then ship the web app last.
+deploy:
+    @echo "Backend first: 1) supabase db push   2) modal deploy (off the hot path)"
+    @echo "Confirm the web env points at the live backend URL, then deploying to Vercel..."
+    cd {{app_dir}} && npx --yes vercel deploy --prod
+    @echo "Deployed. Run: just health production"
+[% else %]
 deploy env="develop":
     @echo "Ordered deploy for {{env}}:"
     @echo "  1) DB migrations first      (e.g. supabase db push)"
     @echo "  2) compute + secret next    (e.g. modal deploy), off the hot path"
     @echo "  3) web env -> live backend URL, then build/deploy LAST"
     @echo "Then run: just health {{env}}"
+[% endif %]
 
 [% if include_two_env_discipline %]
 # Promotion to prod is gated by docs/ENVIRONMENTS.md (must pass E2E twice).

@@ -57,13 +57,25 @@ the next update. See [HARVEST.md](HARVEST.md).
 
 ## Spin up a project
 
+### Quickest start: the create-groundwork wrapper
+
+One command preflights prerequisites, generates the project, and offers the first
+run (install deps, then `just verify`):
+
+```
+curl -LsSf https://raw.githubusercontent.com/SynSe7en7/groundwork/main/scripts/create-groundwork.sh | bash -s -- ./my-new-project
+```
+
+It is a thin wrapper over the Copier path below; pass any `copier` arguments after
+the destination (for example `--data project_type=web` or `--vcs-ref vX.Y.Z`).
+
 ### Path A: Copier (for anything long-lived; stays updatable)
 
 ```
 uvx copier copy --trust gh:SynSe7en7/groundwork ./my-new-project
 ```
 
-Runs the questionnaire, materializes one scaffold, writes `.copier-answers.yml` pinned to the foundation tag, and inits fresh git history. Pin a known version with `--vcs-ref vX.Y.Z`.
+Runs the questionnaire, materializes one scaffold, writes `.copier-answers.yml` pinned to the foundation tag, and inits fresh git history. Pin a known version with `--vcs-ref vX.Y.Z`. Afterward, `cd` in and run `just setup` then `just verify`.
 
 ### Path B: GitHub template (zero-install, one-off)
 
