@@ -177,8 +177,12 @@ exists.
 - Discovery parity with spec-kit: a clarify gate (a ratified assumption ledger
   before planning) and an analyze pass (cross-artifact consistency: CHARTER vs
   VISION vs PRD).
-- ADR integrity: an index file, append-only validation, and supersession-pointer
-  checks (today honor-system).
+- ADR integrity: SHIPPED (index + status + supersession). `docs/adr/README.md` is
+  the index, and `scripts/check_adrs.py` (in the foundation CI lint job) enforces
+  that every ADR has a valid status, is listed in the index with a matching status,
+  and that a superseded ADR names its successor. The git-diff append-only check
+  (an accepted ADR's body is never edited) is a follow-up; the index documents the
+  immutability convention meanwhile.
 - Build provenance and SBOM: `actions/attest-build-provenance` plus an SBOM
   (syft) for the signed auto-updating desktop binaries, reaching SLSA Build L2+.
 - Generated CI gains Dependabot and CodeQL; harden `run-heavy` (per-user rate
