@@ -185,9 +185,12 @@ exists.
   immutability convention meanwhile.
 - Build provenance and SBOM: `actions/attest-build-provenance` plus an SBOM
   (syft) for the signed auto-updating desktop binaries, reaching SLSA Build L2+.
-- Generated CI gains Dependabot and CodeQL; harden `run-heavy` (per-user rate
-  limit, an `AbortController` timeout, a payload-size cap, an SSRF allowlist for
-  the Modal endpoint).
+- Generated CI gains Dependabot and CodeQL: SHIPPED. A scaffold-aware
+  `.github/dependabot.yml` (github-actions everywhere, plus npm per scaffold and
+  cargo for desktop, the pnpm root for hybrid) and a `codeql.yml` scanning the
+  JavaScript/TypeScript surface. (Rust CodeQL for the Tauri shim is a later option.)
+- Harden `run-heavy` (per-user rate limit, an `AbortController` timeout, a
+  payload-size cap, an SSRF allowlist for the Modal endpoint).
 
 Acceptance: a PR touching a gated surface without ratification fails; the desktop
 release emits provenance and an SBOM; the edge function has limits.

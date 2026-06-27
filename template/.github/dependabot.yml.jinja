@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # GitHub Actions used by this project's workflows.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    labels: ["dependencies"]
+[% if project_type in ['web', 'mobile', 'desktop'] %]
+  - package-ecosystem: npm
+    directory: "/[[ project_type ]]"
+    schedule:
+      interval: weekly
+    labels: ["dependencies"]
+[% endif %]
+[% if project_type == 'desktop' %]
+  - package-ecosystem: cargo
+    directory: "/desktop/src-tauri"
+    schedule:
+      interval: weekly
+    labels: ["dependencies"]
+[% endif %]
+[% if project_type == 'hybrid' %]
+  # pnpm workspace at the monorepo root.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    labels: ["dependencies"]
+[% endif %]
