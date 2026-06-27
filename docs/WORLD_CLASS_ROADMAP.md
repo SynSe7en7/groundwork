@@ -98,7 +98,8 @@ The high-leverage move. Two halves; 1a underpins 1b.
 - Every-prior-version update tests: `copier update` from v0.1.0, v0.2.0, v0.3.0
   to HEAD, across all four scaffolds (web, mobile, desktop, hybrid) and the core
   overlay, asserting governance propagates and user-owned files are never
-  clobbered (today: one hop, web only, PR-only).
+  clobbered. SHIPPED: the `update-matrix` CI job covers all 15 version x scaffold
+  cells (was: one hop, web only).
 - Content-validating lint: a loop's `exit` declares four concrete stops (not
   `TBD`); a gate marked ratified has an artifact whose status is accepted.
 - Release engineering: adopt changesets or release-please for a generated
