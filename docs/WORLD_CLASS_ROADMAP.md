@@ -185,8 +185,14 @@ exists.
   and that a superseded ADR names its successor. The git-diff append-only check
   (an accepted ADR's body is never edited) is a follow-up; the index documents the
   immutability convention meanwhile.
-- Build provenance and SBOM: `actions/attest-build-provenance` plus an SBOM
-  (syft) for the signed auto-updating desktop binaries, reaching SLSA Build L2+.
+- Build provenance and SBOM: SHIPPED (wired; verification deferred to the first
+  real desktop release). The desktop `release.yml` now attests build provenance
+  for the signed bundles via `actions/attest-build-provenance` (one attestation
+  per matrix leg, over the binaries that leg built) and emits an SPDX SBOM of the
+  npm + cargo dependency graph via `anchore/sbom-action` (syft), attached to the
+  release, reaching SLSA Build L2+. It only runs on a real `v*`-tagged desktop
+  release, so it cannot be exercised by the foundation's render/PR CI; verify on
+  the first real desktop project release with `gh attestation verify <file>`.
 - Generated CI gains Dependabot and CodeQL: SHIPPED. A scaffold-aware
   `.github/dependabot.yml` (github-actions everywhere, plus npm per scaffold and
   cargo for desktop, the pnpm root for hybrid) and a `codeql.yml` scanning the
