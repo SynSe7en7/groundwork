@@ -8,10 +8,10 @@
 
 `groundwork` is a model-agnostic, Copier-based project-foundation builder with a
 governed-update channel. Public at `github.com/SynSe7en7/groundwork`, local clone
-`~/Dev/groundwork`. It is **shipped through v0.8.0**, CI all green, main clean.
-**Phase 2 is complete (6 of 6).**
+`~/Dev/groundwork`. It is **shipped through v0.9.0**, CI all green, main clean.
+**Phase 2 is complete (6 of 6); Phase 3 is essentially complete.**
 
-This session executed the World-Class Roadmap from v0.3.0 to v0.8.0:
+This session executed the World-Class Roadmap from v0.3.0 to v0.9.0:
 - **v0.4.0** — Phase 0 (security hardening) + Phase 1a (the foundation as software
   under test).
 - **v0.5.0** — Phase 1b (the governed-update channel as a product).
@@ -19,19 +19,19 @@ This session executed the World-Class Roadmap from v0.3.0 to v0.8.0:
 - **v0.7.0** — Phase 2 spec-kit parity (the 5th item).
 - **v0.8.0** — Phase 2 build provenance + SBOM (the 6th item; wired, verification
   deferred to a real desktop release). Phase 2 done.
+- **v0.9.0** — Phase 3 adoption: `CONTRIBUTING.md`, README positioning, the
+  `create-groundwork` wrapper, `just setup` + first-run, and the web Vercel deploy
+  path. Plus the first tracked instance (`SynSe7en7/groundwork-example-web`).
 
-**The immediate next work**: Phase 3 (adoption) is underway. Shipped so far:
-`CONTRIBUTING.md` and the README positioning paragraph + "Why groundwork" section
-(the two prose acceptance criteria). Remaining Phase 3: the `create-groundwork`
-entry point, a one-command web deploy preview, foregrounding the first run, and a
-runnable example + transcript (these win the "a new user reaches a live URL in
-minutes" acceptance and several carry real design forks — entry-point delivery,
-the Vercel deploy path, and where the example lives). Then Phase 4 (demand-gated).
-The last Phase 2 item, **build provenance + SBOM for the desktop binaries**, is
-**wired** into the desktop `release.yml` (provenance per matrix leg + an SPDX
-SBOM); its verification is deferred to the first real desktop release because it
-only runs on a real `v*` tag (see "What remains"). The roadmap marks every
-shipped item inline.
+**The immediate next work**: short Phase 3 tail, then Phase 4 (demand-gated).
+Phase 3 is essentially done — all six items shipped. The remaining tail is small:
+(1) deploy the example to a live preview URL with one `just deploy-preview` (needs
+the Vercel CLI authenticated) to fully close the "live URL in minutes" acceptance,
+and (2) the formal harvest round-trip via the `harvest` skill + `HARVEST.md`, now
+doable because a second tracked instance exists. The two wire-now-verify-later
+items still want a real run: the desktop **build provenance + SBOM** (`gh
+attestation verify` on a real desktop release) and the web **Vercel deploy** path.
+The roadmap marks every shipped item inline.
 
 ## How releases work now (changed this session)
 
@@ -117,16 +117,27 @@ foundation `dependabot.yml` (github-actions). Generated projects also ship a
   project release: `gh attestation verify <bundle> --repo <owner>/<repo>` and
   confirm `sbom.spdx.json` is attached. Optional hardening follow-up: bind the
   SBOM to the binaries with `actions/attest-sbom`.
-- **Phase 3 (adoption/proof)**: `create-groundwork` entry, one-command deploy
-  preview for web, foreground the first run, a runnable example + transcript,
-  CONTRIBUTING, the positioning paragraph.
+- **Phase 3 (adoption/proof): SHIPPED.** `CONTRIBUTING.md`, README positioning +
+  "Why groundwork", `scripts/create-groundwork.sh` (the in-repo wrapper),
+  `just setup` + the wrapper's first-run prompt (and `verify` now passes on a fresh
+  scaffold via `test --if-present`), the web Vercel `deploy-preview`/`deploy` path,
+  and the runnable example (`SynSe7en7/groundwork-example-web`, tracked at v0.9.0,
+  builds clean, README carries the transcript). Small tail: (1) one
+  `just deploy-preview` from the example to land a live URL (needs Vercel CLI auth)
+  to fully close the "live URL in minutes" acceptance; (2) the formal harvest
+  round-trip via the `harvest` skill + `HARVEST.md`.
 - **Phase 4 (demand-gated)**: shared-primitive factoring, a non-JS backend
   scaffold, a scaffold/skill registry seam, discovery-driven scaffold assignment,
   the orchestrator/roadmap loops. Earned by a second/third real project.
-- **The harvest round-trip + the projects-on-latest metric** stay gated on a
-  second project actually GENERATED from groundwork (the lone consumer,
-  lab-gmp-automation, was hand-wired, not scaffolded; it has no `.copier-answers.yml`).
-  Standing one up unblocks both. Append-only ADR git-diff check is a small follow-up.
+- **The harvest round-trip + the projects-on-latest metric: UNBLOCKED.** The
+  second project generated from groundwork now exists and is tracked
+  (`SynSe7en7/groundwork-example-web`, committed `.copier-answers.yml` pinned to
+  v0.9.0; the other consumer, lab-gmp-automation, is hand-wired with no answers
+  file). Projects-on-latest is a real 1-of-1 on latest. The formal harvest
+  round-trip is now doable; the v0.9.0 fix (remove a stray committed
+  `next-env.d.ts` from the desktop template + ignore `next-env.d.ts` /
+  `*.tsbuildinfo`, a gap the example surfaced) is an informal first pull-up.
+  Append-only ADR git-diff check is a small follow-up.
 
 ## Conventions + gotchas (hard-won, these cost real time)
 
