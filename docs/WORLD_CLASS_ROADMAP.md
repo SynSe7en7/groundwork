@@ -162,7 +162,11 @@ golden snapshots diff on content change; `CHANGELOG` is generated; `just doctor`
 reports drift. The harvest mechanism is built and demonstrated with a labeled
 dry-run now; the documented real harvest round-trip lands once a second project,
 generated from groundwork and tracked via a committed `.copier-answers.yml`,
-exists.
+exists. UPDATE (v0.9.0): that second instance now exists
+(`SynSe7en7/groundwork-example-web`), so the formal round-trip via the `harvest`
+skill and `HARVEST.md` is now doable; the stray-artifact + `.gitignore` fix this
+release carries is an informal first pull-up from it (a gap the real instance
+surfaced).
 
 ## Phase 2: governance teeth + security depth (v0.5.0)
 
@@ -225,7 +229,17 @@ This category wins on proof, not feature lists.
   generation. `verify`'s test step is now `--if-present`, so a fresh scaffold
   passes verify out of the box (the missing-test gap that CI never exercised).
 - One runnable example app and a published scaffold-to-deploy transcript; a
-  minimal docs page.
+  minimal docs page: SHIPPED. `SynSe7en7/groundwork-example-web` is a real web
+  instance generated from groundwork v0.9.0 and tracked via a committed
+  `.copier-answers.yml`. Its README carries the scaffold-to-run transcript. The
+  instance builds clean (npm install + lint + typecheck + Next.js production
+  build). A live preview URL is one `just deploy-preview` away once the Vercel
+  CLI is authenticated. This is also the second tracked instance, which unblocks
+  the harvest round-trip and the projects-on-latest metric (see below). The first
+  gap it surfaced is fixed in the foundation in the same change: a stray
+  Next-generated `next-env.d.ts` had been committed into the desktop template
+  (Next regenerates it every build), so it is removed and the shared `.gitignore`
+  now ignores `next-env.d.ts` / `*.tsbuildinfo`.
 - `CONTRIBUTING.md`: SHIPPED. The two-real-instances bar, a where-it-goes table
   (skill/loop/ADR/gate/generated-content) mapped to the CI check that guards each,
   the golden-snapshot regeneration step, the full CI gate, the harvest
@@ -323,4 +337,7 @@ These sharpen the plan; apply them as you build.
   on a released tag), so add that conversion step before invoking the metric.
   Until a second tracked instance exists, use "percent of foundation claims backed
   by a green CI check" as the interim metric, which is measurable today. No
-  fleet-tracking or telemetry infrastructure (that is a non-goal).
+  fleet-tracking or telemetry infrastructure (that is a non-goal). UPDATE (v0.9.0):
+  the first tracked instance now exists (`SynSe7en7/groundwork-example-web`, pinned
+  to v0.9.0), so the projects-on-latest count is a real 1-of-1 on latest; the
+  interim CI-claim metric still stands alongside it.
