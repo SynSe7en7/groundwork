@@ -218,11 +218,17 @@ This category wins on proof, not feature lists.
   dev server or run `just verify`.
 - One runnable example app and a published scaffold-to-deploy transcript; a
   minimal docs page.
-- `CONTRIBUTING.md`: the two-real-instances bar, where a new skill/loop/ADR goes,
-  the CI gate it must pass, and the promote-from-a-real-project path.
-- The positioning paragraph: why groundwork over superpowers, spec-kit, and
-  create-t3-app, in one repeatable sentence; plus a measured outcome from the one
-  real project.
+- `CONTRIBUTING.md`: SHIPPED. The two-real-instances bar, a where-it-goes table
+  (skill/loop/ADR/gate/generated-content) mapped to the CI check that guards each,
+  the golden-snapshot regeneration step, the full CI gate, the harvest
+  promote-from-a-real-project path, and the branch/PR/release workflow.
+- The positioning paragraph: SHIPPED. README now has a "Why groundwork" section
+  with the one-repeatable-sentence positioning against methodology kits
+  (superpowers, spec-kit) and scaffolders (create-t3-app, cookiecutter, Vercel
+  templates). The measured outcome uses the interim metric (every behavioral claim
+  backed by a green CI check; 33 checks on the last green run, including 15
+  version-by-scaffold update cells), with the fleet-scale outcome called out as
+  pending a second tracked instance.
 
 Acceptance: a new user reaches a live URL in minutes; CONTRIBUTING exists; the
 positioning paragraph is in the README.

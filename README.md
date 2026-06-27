@@ -12,6 +12,23 @@ project's scaffold is assigned during discovery from its real requirements, and
 the project then carries only that scaffold. groundwork is a Copier template and
 also a GitHub template repository.
 
+## Why groundwork
+
+Methodology kits (superpowers, spec-kit) give you process but no running stack and
+no way to push an improvement into the projects you already started. Scaffolders
+(create-t3-app, cookiecutter, Vercel templates) give you a running stack but no
+governance and no update path once you have cloned them. groundwork is the one
+that does both: a build-verified stack and an agent-governance layer that
+`copier update` carries into every project you have generated, and `harvest`
+carries proven patterns back up.
+
+Every behavioral claim it makes is backed by a CI check that fails the pull
+request if the claim breaks. The last green run exercised 33 such checks,
+including 15 version-by-scaffold update cells that prove a generated project can
+take a foundation update without losing its own work. The fleet-scale outcome (a
+set of real projects all sitting on the latest tag with no manual update step)
+lands once a second project is generated and tracked.
+
 ## The update channel (the point)
 
 A project generated from groundwork stays connected to it:
@@ -78,3 +95,10 @@ Existing files are never overwritten, and no commit is made. See [INSTALL.md](IN
 ## Versioning
 
 The foundation is tagged with semver and released with release-please from conventional commits: `feat` is a new capability (a minor bump while pre-1.0), `fix` is a patch, and a breaking change bumps the minor until 1.0. A release is cut by merging release-please's release pull request, which writes the tag, the GitHub Release, and `CHANGELOG.md`. All four scaffolds are first-class and stay build-verified on every change. Published tags are never moved.
+
+## Contributing
+
+Contributions are held to the same bar a spawned project is. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for the two-real-instances rule, where a new
+skill, loop, or ADR goes, the CI gate it must pass, and the harvest path for
+promoting a pattern proven in a real project back into the foundation.
