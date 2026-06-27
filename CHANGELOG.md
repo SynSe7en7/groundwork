@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/SynSe7en7/groundwork/compare/v0.9.0...v0.9.1) (2026-06-27)
+
+
+### Bug Fixes
+
+* **desktop:** remove stray committed next-env.d.ts; close out Phase 3 ([#37](https://github.com/SynSe7en7/groundwork/issues/37)) ([c2544d5](https://github.com/SynSe7en7/groundwork/commit/c2544d50c8e0f91e96ce65adbe2acdb315bd94f6))
+
 ## [0.9.0](https://github.com/SynSe7en7/groundwork/compare/v0.8.0...v0.9.0) (2026-06-27)
 
 
