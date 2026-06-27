@@ -135,31 +135,49 @@ jobs:
         working-directory: ${{ env.OUT }}/desktop
         run: npm run tauri build -- --no-bundle
 
-  # Regression gate: copier update must actually propagate governance changes.
-  # Scaffolds at the latest released tag, updates to HEAD, and asserts a known
-  # v0.2 governance change (GEMINI.md dropped from .gemini/settings.json) lands.
-  update-propagation:
-    name: copier update propagates
+  # The moat, enforced. copier update must propagate governance across EVERY
+  # prior version and EVERY scaffold (web/mobile/desktop/hybrid/core) without
+  # clobbering user-owned files. Scaffolds at each released tag, updates to this
+  # PR's HEAD, and asserts: update succeeds; a new governance file (SECURITY.md)
+  # propagates IN; a removed governance line (GEMINI.md, dropped in v0.2) is gone;
+  # and a user edit to a _skip_if_exists file (CHARTER.md) is never clobbered.
+  update-matrix:
+    name: update ${{ matrix.from }} -> HEAD (${{ matrix.scaffold }})
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        from: [v0.1.0, v0.2.0, v0.3.0]
+        scaffold: [web, mobile, desktop, hybrid, core]
     steps:
       - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
       - run: git config --global user.email ci@groundwork.local && git config --global user.name "groundwork CI"
-      - name: scaffold at v0.1.0, update to this PR branch, assert propagation
+      - name: scaffold at ${{ matrix.from }}, edit a user file, update to this PR, assert
         run: |
           set -euo pipefail
           proj="$(mktemp -d)"
-          # Base scaffold from the public repo at the released tag.
-          uvx copier copy --defaults --trust --vcs-ref v0.1.0 \
-            --data project_type=web --data project_name="UT" \
+          uvx copier copy --defaults --trust --vcs-ref ${{ matrix.from }} \
+            --data project_type=${{ matrix.scaffold }} --data project_name="UT" \
             gh:SynSe7en7/groundwork "$proj"
-          grep -q "GEMINI.md" "$proj/.gemini/settings.json" || { echo "baseline lacks GEMINI.md sentinel; skipping"; exit 0; }
+          cd "$proj"
+          git rev-parse --git-dir >/dev/null 2>&1 || git init -q
+          # Seed a user edit in a user-owned (_skip_if_exists) file.
+          test -f CHARTER.md && echo "USER-SENTINEL-DO-NOT-CLOBBER" >> CHARTER.md
+          git add -A && git commit -q -m "baseline + user edit" --allow-empty
           # Update to this PR's branch HEAD.
-          ( cd "$proj" && uvx copier update --defaults --trust --vcs-ref "${{ github.head_ref }}" )
-          if grep -q "GEMINI.md" "$proj/.gemini/settings.json"; then
-            echo "FAIL: copier update did not propagate the governance change (GEMINI.md still present)"; exit 1
+          uvx copier update --defaults --trust --vcs-ref "${{ github.head_ref }}"
+          # (1) a new governance file propagated IN from HEAD
+          test -f SECURITY.md || { echo "FAIL: SECURITY.md did not propagate from HEAD"; exit 1; }
+          # (2) a removed governance line is gone (a real removal from a v0.1 baseline)
+          if [ -f .gemini/settings.json ] && grep -q "GEMINI.md" .gemini/settings.json; then
+            echo "FAIL: GEMINI.md removal did not propagate"; exit 1
           fi
-          echo "copier update propagated the governance change OK"
+          # (3) a user-owned file is never clobbered
+          if [ -f CHARTER.md ] && ! grep -q "USER-SENTINEL-DO-NOT-CLOBBER" CHARTER.md; then
+            echo "FAIL: copier update clobbered a user-owned file (CHARTER.md)"; exit 1
+          fi
+          echo "OK: ${{ matrix.from }} -> HEAD (${{ matrix.scaffold }}) propagated cleanly"
 
   lint-skills-loops:
     name: skills and loops are well-formed
