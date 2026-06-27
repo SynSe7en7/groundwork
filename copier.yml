@@ -92,7 +92,7 @@ project_description:
 
 project_type:
   type: str
-  help: "Application surface to scaffold, or 'core' to add governance to an existing project."
+  help: "Application surface to scaffold, or 'core' to add governance to an existing project. Unsure? The scaffold-assignment skill maps requirements to one scaffold."
   choices:
     "Web (Next.js 16 App Router + TS + Tailwind)": web
     "Mobile (Expo / React Native + Expo Router; web-capable via RNW)": mobile

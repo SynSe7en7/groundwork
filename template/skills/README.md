@@ -75,6 +75,7 @@ The AGENTS.md skills index is the portable backstop: a tool that does not read
 
 | Skill | What it does | Trigger |
 |---|---|---|
+| `scaffold-assignment` | Maps a project's requirements to one scaffold (web/mobile/desktop/hybrid/core) with a one-line rationale, records it in `CHARTER.md` and `DECISIONS.md`, and defines the recorded path for changing scaffold later. | Spinning up a project and choosing `project_type`, the owner asks "which scaffold" or "should this be hybrid", or a project needs to change scaffold as a recorded migration. |
 | `discovery` | Runs the PM/CEO discovery interview that fills `CHARTER.md`, `VISION.md`, and `docs/prd/`, then flips the Charter and PRD gates and marks the project's starting skills and loops active. | First session of a new or freshly-adopted project, before feature work, when `CHARTER.md` or `VISION.md` is still template-filled. |
 | `run-gate` | Walks any one alignment gate's key questions, drafts or updates its artifact, and sets its status in `docs/GATES.md`. | An activity is about to start whose gate (Stack/ADR, PRD/Plan, Clarify, Design, Deployment & Security) is not yet ratified. |
 | `harvest` | Promotes a pattern proven in this project up into the foundation: confirms the two-real-instances bar, generalizes it, and opens a foundation pull request with the required CI coverage. | A pattern, helper, skill, loop, or ADR has proven itself here and should become a foundation default, or the user says "harvest this" or "promote this upstream". |
