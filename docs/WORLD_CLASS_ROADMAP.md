@@ -132,13 +132,18 @@ The high-leverage move. Two halves; 1a underpins 1b.
   foundation tag, cruft-style), and suggests the next step. Read-only.
 - `just foundation-update-preview`: SHIPPED. Dry-runs the update via copier
   `--pretend` (writes nothing) before applying.
-- Ship a `renovate.json` in spawned projects using Renovate's first-class
-  `copier` manager (auto-opens `copier update` PRs), and run Renovate or
-  Dependabot on the foundation itself. Acceptance is that the auto-opened PR
-  actually contains the rendered copier diff (see execution notes); ship a cron
-  `copier update --pretend` that opens an issue as the default fallback.
-- Scheduled float-build (cron) that flags when the pinned matrix has drifted out
-  from under the scaffolds, before users hit it.
+- SHIPPED (the reliable default): a weekly `foundation-drift` cron shipped into
+  projects (`template/.github/workflows/foundation-drift.yml`) that compares the
+  project's `.copier-answers.yml` `_commit` to the latest foundation tag and opens
+  (or reuses) an issue pointing at `just foundation-update` when behind. Dependabot
+  runs on the foundation itself for its pinned actions (`.github/dependabot.yml`).
+  DEFERRED: a `renovate.json` using Renovate's `copier` manager stays optional
+  until its auto-opened PR is verified to contain the rendered copier diff (open
+  reports of empty PRs); the cron is the default until then.
+- DEFERRED: a scheduled float-build (cron) that renders the scaffolds against
+  latest upstream deps to flag when the pinned matrix has drifted, before users
+  hit it. The project-behind-foundation drift is covered above; this is the
+  upstream-dependency-drift half and is a small follow-up.
 - Reposition: SHIPPED. The README now leads with the governed-update channel (a
   top "The update channel (the point)" section covering doctor, preview, update,
   and the harvest pull-up) and states that discovery assigns the scaffold. The
