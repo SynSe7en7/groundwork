@@ -28,6 +28,20 @@ nothing is decided before it has to be.
 A gate may be exempt for a given change when that change meets the gate's
 triviality exemption. Record the exemption in the PR description, not here.
 
+## Enforcement
+
+CI enforces these gates on every pull request (`scripts/check-gates.sh`). It maps
+the PR diff to the gates it triggers (Stack via dependency manifests, Design via a
+new UI surface, Deployment & Security via migrations, env, or the deploy/security
+docs) and fails the PR when a triggered gate is not `ratified` here, unless the
+gate's artifact is updated in the same PR (you are ratifying it now) or the PR
+description carries an exemption line:
+
+    gate-exempt: <key>[, <key>...]      # keys: stack, design, deploy
+
+Use the exemption for a change the gate's triviality exemption clears (for example
+a routine dependency bump within an already-decided stack), and say why.
+
 ## State
 
 | Gate | Status | Artifact | Last updated |

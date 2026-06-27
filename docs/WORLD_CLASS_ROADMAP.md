@@ -166,9 +166,14 @@ exists.
 
 ## Phase 2: governance teeth + security depth (v0.5.0)
 
-- Gate enforcement: a CI job maps a PR diff to the gates it triggers and fails
-  when `docs/GATES.md` does not show them ratified, with a PR-description
-  exemption escape hatch. Converts the advisory gate system to enforced.
+- Gate enforcement: SHIPPED. The generated-project CI (`scripts/check-gates.sh`,
+  the `alignment-gates` job) maps a PR diff to the gates it triggers (Stack via
+  dependency manifests, Design via a new UI surface, Deployment & Security via
+  migrations/env/deploy docs) and fails when a triggered gate is not ratified in
+  `docs/GATES.md`, unless its artifact is updated in the same PR or the PR body
+  carries `gate-exempt: <key>`. Converts the advisory tripwires to enforced gates;
+  decision in `docs/adr/0001-enforce-alignment-gates.md`. Verified against
+  block/pass/ratify/exempt scenarios.
 - Discovery parity with spec-kit: a clarify gate (a ratified assumption ledger
   before planning) and an analyze pass (cross-artifact consistency: CHARTER vs
   VISION vs PRD).
