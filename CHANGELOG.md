@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/SynSe7en7/groundwork/compare/v0.6.0...v0.7.0) (2026-06-27)
+
+
+### Features
+
+* clarify gate + analyze skill (spec-kit parity) ([#28](https://github.com/SynSe7en7/groundwork/issues/28)) ([49b1ccf](https://github.com/SynSe7en7/groundwork/commit/49b1ccfcb3ed3bef614ff900cd2d30c3fe5a6729))
+
 ## [0.6.0](https://github.com/SynSe7en7/groundwork/compare/v0.5.0...v0.6.0) (2026-06-27)
 
 
