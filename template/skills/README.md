@@ -76,8 +76,9 @@ The AGENTS.md skills index is the portable backstop: a tool that does not read
 | Skill | What it does | Trigger |
 |---|---|---|
 | `discovery` | Runs the PM/CEO discovery interview that fills `CHARTER.md`, `VISION.md`, and `docs/prd/`, then flips the Charter and PRD gates and marks the project's starting skills and loops active. | First session of a new or freshly-adopted project, before feature work, when `CHARTER.md` or `VISION.md` is still template-filled. |
-| `run-gate` | Walks any one alignment gate's key questions, drafts or updates its artifact, and sets its status in `docs/GATES.md`. | An activity is about to start whose gate (Stack/ADR, PRD/Plan, Design, Deployment & Security) is not yet ratified. |
+| `run-gate` | Walks any one alignment gate's key questions, drafts or updates its artifact, and sets its status in `docs/GATES.md`. | An activity is about to start whose gate (Stack/ADR, PRD/Plan, Clarify, Design, Deployment & Security) is not yet ratified. |
 | `harvest` | Promotes a pattern proven in this project up into the foundation: confirms the two-real-instances bar, generalizes it, and opens a foundation pull request with the required CI coverage. | A pattern, helper, skill, loop, or ADR has proven itself here and should become a foundation default, or the user says "harvest this" or "promote this upstream". |
+| `analyze` | Cross-checks the committed artifacts (CHARTER/VISION/PRD/plan/clarify, DECISIONS, ADRs) for consistency and reports contradictions, drift, and gaps without rewriting them. | Before a Plan ratifies or a large change merges, or the user asks to "analyze" or "cross-check the docs". |
 
 Keep this table in sync with the folders. A skill that exists but is missing here
 is invisible to any tool reading the portable backstop.
