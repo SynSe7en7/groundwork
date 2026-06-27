@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # Keep the foundation's own CI actions fresh. They are SHA-pinned for supply-chain
+  # safety, which means they go stale silently; Dependabot bumps the pins (and their
+  # version comments) on a schedule. Generated-project Dependabot/CodeQL is a Phase 2
+  # item, tracked separately.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    labels:
+      - dependencies

@@ -1,0 +1,39 @@
+name: foundation-drift
+
+# Weekly drift signal: is this project behind the latest groundwork release? If so,
+# open (or reuse) an issue pointing at `just foundation-update`. Read-only apart
+# from that one issue. This is the reliable signal; Renovate's copier manager is an
+# optional alternative once its PR fidelity is verified (see the foundation roadmap).
+on:
+  schedule:
+    - cron: "0 14 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Check foundation drift, open an issue if behind
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ ! -f .copier-answers.yml ]; then echo "not a tracked instance; skipping"; exit 0; fi
+          cur=$(grep '^_commit:' .copier-answers.yml | head -1 | awk '{print $2}')
+          src=$(grep '^_src_path:' .copier-answers.yml | head -1 | awk '{print $2}')
+          case "$src" in gh:*) url="https://github.com/${src#gh:}" ;; *) url="$src" ;; esac
+          latest=$(git ls-remote --tags --refs "$url" 2>/dev/null | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          if [ -z "$latest" ]; then echo "could not reach $url; skipping"; exit 0; fi
+          if [ "$cur" = "$latest" ]; then echo "up to date ($cur)"; exit 0; fi
+          echo "behind: on $cur, latest is $latest"
+          gh label create foundation-update --color 0E8A16 --description "groundwork foundation update available" 2>/dev/null || true
+          existing=$(gh issue list --state open --label foundation-update --json title --jq '.[].title' 2>/dev/null | grep -F "$latest" || true)
+          if [ -n "$existing" ]; then echo "issue already open for $latest"; exit 0; fi
+          gh issue create --label foundation-update \
+            --title "Foundation update available: $latest (on $cur)" \
+            --body "This project is on groundwork $cur; the latest release is $latest. Preview with 'just foundation-update-preview', then apply with 'just foundation-update'. Automated weekly drift check (.github/workflows/foundation-drift.yml)."
