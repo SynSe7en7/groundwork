@@ -189,8 +189,11 @@ exists.
   `.github/dependabot.yml` (github-actions everywhere, plus npm per scaffold and
   cargo for desktop, the pnpm root for hybrid) and a `codeql.yml` scanning the
   JavaScript/TypeScript surface. (Rust CodeQL for the Tauri shim is a later option.)
-- Harden `run-heavy` (per-user rate limit, an `AbortController` timeout, a
-  payload-size cap, an SSRF allowlist for the Modal endpoint).
+- Harden `run-heavy`: SHIPPED. The Supabase edge function now caps the payload
+  (64 KB), rate-limits per user (a windowed `jobs` count, default 30/60s), wraps
+  the Modal handoff in an `AbortController` timeout (10s), and validates the
+  endpoint is HTTPS on an allowlisted host (`.modal.run`, overridable via
+  `MODAL_ALLOWED_HOSTS`) before fetching it.
 
 Acceptance: a PR touching a gated surface without ratification fails; the desktop
 release emits provenance and an SBOM; the edge function has limits.
