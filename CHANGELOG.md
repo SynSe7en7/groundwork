@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/SynSe7en7/groundwork/compare/v0.7.0...v0.7.1) (2026-06-27)
+
+
+### Documentation
+
+* refresh HANDOFF.md for the v0.7.0 handoff ([#30](https://github.com/SynSe7en7/groundwork/issues/30)) ([5713750](https://github.com/SynSe7en7/groundwork/commit/5713750559e1cd39e41533e63608231846ee4303))
+
 ## [0.7.0](https://github.com/SynSe7en7/groundwork/compare/v0.6.0...v0.7.0) (2026-06-27)
 
 
