@@ -27,6 +27,36 @@ foundation-update-to version:
 foundation-recopy:
     uvx copier recopy --trust
 
+# Preview the next foundation update as a dry run (writes nothing), before applying.
+foundation-update-preview:
+    uvx copier update --trust --skip-answered --pretend
+
+# Check prerequisites, a clean tree, and whether this project is behind the latest
+# foundation release. Read-only: it reports and suggests the next step.
+doctor:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    echo "groundwork doctor"
+    for t in uv git just; do
+      if command -v "$t" >/dev/null 2>&1; then echo "  $t: ok"; else echo "  $t: MISSING"; fi
+    done
+    if git diff --quiet 2>/dev/null && git diff --cached --quiet 2>/dev/null; then
+      echo "  tree: clean"
+    else
+      echo "  tree: dirty (commit or stash before foundation-update)"
+    fi
+    if [ -f .copier-answers.yml ]; then
+      cur=$(grep '^_commit:' .copier-answers.yml | head -1 | awk '{print $2}')
+      src=$(grep '^_src_path:' .copier-answers.yml | head -1 | awk '{print $2}')
+      case "$src" in gh:*) url="https://github.com/${src#gh:}" ;; *) url="$src" ;; esac
+      latest=$(git ls-remote --tags --refs "$url" 2>/dev/null | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+      if [ -z "$latest" ]; then echo "  drift: could not reach $url"
+      elif [ "$cur" = "$latest" ]; then echo "  drift: up to date ($cur)"
+      else echo "  drift: BEHIND (on $cur, latest $latest) -> run: just foundation-update"; fi
+    else
+      echo "  drift: no .copier-answers.yml (not a tracked instance)"
+    fi
+
 # --- Verify (run before every commit and after every update) -----------------
 
 # The app lives in a preset subdirectory (hybrid is a monorepo run from root).
