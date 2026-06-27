@@ -17,10 +17,12 @@ This session executed the World-Class Roadmap from v0.3.0 to v0.7.0:
 - **v0.6.0** — Phase 2 governance/security teeth (4 of 6 items).
 - **v0.7.0** — Phase 2 spec-kit parity (the 5th item).
 
-**The immediate next work**: the one remaining Phase 2 item, **build provenance +
-SBOM for the desktop binaries** (deferred all session because it only runs on a
-real tagged desktop release; see "What remains"). Then Phase 3 (adoption) and
-Phase 4 (demand-gated). The roadmap marks every shipped item inline.
+**The immediate next work**: Phase 3 (adoption) and Phase 4 (demand-gated). The
+last Phase 2 item, **build provenance + SBOM for the desktop binaries**, is now
+**wired** into the desktop `release.yml` (provenance per matrix leg + an SPDX
+SBOM); its verification is deferred to the first real desktop release because it
+only runs on a real `v*` tag (see "What remains"). The roadmap marks every
+shipped item inline.
 
 ## How releases work now (changed this session)
 
@@ -94,13 +96,18 @@ foundation `dependabot.yml` (github-actions). Generated projects also ship a
 
 ## What remains
 
-- **Phase 2, item 6 (the only Phase 2 gap): build provenance + SBOM** for the
-  signed auto-updating desktop binaries. Add `actions/attest-build-provenance` and
-  an SBOM step (e.g. anchore/syft) to the desktop release workflow
-  (`template/.github/workflows/[% if project_type == 'desktop' %]release.yml[% endif %]`),
-  reaching SLSA Build L2+. DEFERRED because it only runs on a real `v*`-tagged
-  desktop release, so it cannot be exercised in the foundation's render/PR CI; wire
-  it and reason about it, then verify on a real desktop project's release.
+- **Phase 2, item 6 — build provenance + SBOM: WIRED, verification pending.** The
+  desktop release workflow
+  (`template/.github/workflows/[% if project_type == 'desktop' %]release.yml[% endif %]`)
+  now attests build provenance for the signed bundles via
+  `actions/attest-build-provenance` (one attestation per matrix leg) and emits an
+  SPDX SBOM of the npm + cargo dependency graph via `anchore/sbom-action` (syft),
+  attached to the release, targeting SLSA Build L2+. It still cannot be exercised
+  in the foundation's render/PR CI (it only runs on a real `v*`-tagged desktop
+  release), so the remaining step is to VERIFY it on the first real desktop
+  project release: `gh attestation verify <bundle> --repo <owner>/<repo>` and
+  confirm `sbom.spdx.json` is attached. Optional hardening follow-up: bind the
+  SBOM to the binaries with `actions/attest-sbom`.
 - **Phase 3 (adoption/proof)**: `create-groundwork` entry, one-command deploy
   preview for web, foreground the first run, a runnable example + transcript,
   CONTRIBUTING, the positioning paragraph.
