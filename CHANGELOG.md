@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.0](https://github.com/SynSe7en7/groundwork/compare/v0.4.0...v0.5.0) (2026-06-27)
+
+
+### Features
+
+* foundation-drift cron + Dependabot on the foundation ([#18](https://github.com/SynSe7en7/groundwork/issues/18)) ([af9e7e8](https://github.com/SynSe7en7/groundwork/commit/af9e7e87aecc2f4aea573a9f27c5433bb369ad52))
+* harvest path (skill + HARVEST.md) to promote patterns upstream ([#16](https://github.com/SynSe7en7/groundwork/issues/16)) ([b233fae](https://github.com/SynSe7en7/groundwork/commit/b233fae748ece03d1fb0376f753c152b2a1eed68))
+* just doctor (drift check) and foundation-update-preview ([#14](https://github.com/SynSe7en7/groundwork/issues/14)) ([d8d9f89](https://github.com/SynSe7en7/groundwork/commit/d8d9f89d0b88ccdca8da95c1783cd4957a88f472))
+
+
+### Documentation
+
+* reposition README around the governed-update channel ([#17](https://github.com/SynSe7en7/groundwork/issues/17)) ([3516939](https://github.com/SynSe7en7/groundwork/commit/35169391e58f225fe21a72d23d68da87c6974398))
+
 ## [0.4.0](https://github.com/SynSe7en7/groundwork/compare/v0.3.0...v0.4.0) (2026-06-27)
 
 
