@@ -194,7 +194,8 @@ surfaced).
   for the signed bundles via `actions/attest-build-provenance` (one attestation
   per matrix leg, over the binaries that leg built) and emits an SPDX SBOM of the
   npm + cargo dependency graph via `anchore/sbom-action` (syft), attached to the
-  release, reaching SLSA Build L2+. It only runs on a real `v*`-tagged desktop
+  release, reaching SLSA Build L2 (inline signed provenance on hosted runners; L3
+  would need a SLSA generator reusable workflow). It only runs on a real `v*`-tagged desktop
   release, so it cannot be exercised by the foundation's render/PR CI; verify on
   the first real desktop project release with `gh attestation verify <file>`.
 - Generated CI gains Dependabot and CodeQL: SHIPPED. A scaffold-aware
@@ -234,8 +235,11 @@ This category wins on proof, not feature lists.
   `.copier-answers.yml`. Its README carries the scaffold-to-run transcript. The
   instance builds clean (npm install + lint + typecheck + Next.js production
   build). A live preview URL is one `just deploy-preview` away once the Vercel
-  CLI is authenticated. This is also the second tracked instance, which unblocks
-  the harvest round-trip and the projects-on-latest metric (see below). The first
+  CLI is authenticated. This is the first genuinely groundwork-generated, tracked
+  instance (1-of-1 on latest; the other consumer, lab-gmp-automation, was
+  hand-wired with no `.copier-answers.yml`). The harvest round-trip and the
+  projects-on-latest metric stay gated on a genuine SECOND generated, tracked
+  project (see below). The first
   gap it surfaced is fixed in the foundation in the same change: a stray
   Next-generated `next-env.d.ts` had been committed into the desktop template
   (Next regenerates it every build), so it is removed and the shared `.gitignore`
@@ -248,7 +252,7 @@ This category wins on proof, not feature lists.
   with the one-repeatable-sentence positioning against methodology kits
   (superpowers, spec-kit) and scaffolders (create-t3-app, cookiecutter, Vercel
   templates). The measured outcome uses the interim metric (every behavioral claim
-  backed by a green CI check; 33 checks on the last green run, including 15
+  backed by a green CI check: a full render/build/lint matrix plus 15
   version-by-scaffold update cells), with the fleet-scale outcome called out as
   pending a second tracked instance.
 
