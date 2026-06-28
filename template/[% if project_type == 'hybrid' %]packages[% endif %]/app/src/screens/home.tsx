@@ -1,10 +1,14 @@
-import { useLink } from 'solito/link'
+'use client'
+
+import { useLink } from 'solito/navigation'
 import { YStack, XStack, H1, Paragraph, Button, EnvBadge } from '@PROJECT_SLUG_PLACEHOLDER/ui'
 
 /**
- * One screen rendered on both web and native. Navigation is shared through
- * Solito: useLink builds a prop set that maps to a Next.js Link on web and a
- * React Navigation / expo-router push on native.
+ * One screen rendered on both web and native. It is a client component (it uses
+ * hooks): the 'use client' directive marks it for the Next.js App Router on web
+ * and is a no-op for Expo on native. Navigation is shared through Solito's
+ * App-Router-compatible hook (solito/navigation), which maps to next/navigation
+ * on web and expo-router on native.
  */
 export function HomeScreen() {
   const aboutLink = useLink({ href: '/about' })
