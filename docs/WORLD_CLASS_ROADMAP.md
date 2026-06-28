@@ -272,9 +272,17 @@ demand; it never reaches back to weaken the four existing scaffolds.
   type, so it is the one subject to the two-real-instances rule.
 - A scaffold/skill registry seam (manifest-driven) so a new surface is additive,
   not a core edit plus a hand-named conditional directory.
-- Conditional skill and loop shipping from `.copier-answers.yml` plus VISION
-  inference, and discovery-driven scaffold assignment (today `project_type` is a
-  manual answer and skills/loops ship unconditionally).
+- Discovery-driven scaffold assignment: SHIPPED (first Phase 4 item). A
+  `scaffold-assignment` skill (5th skill) maps a project's requirements to one
+  scaffold with a one-line rationale and owns the recorded change path; discovery
+  gained a Round 0 that confirms the assignment and records the rationale in
+  CHARTER + DECISIONS; the `copier.yml` `project_type` help points at it. The
+  scaffold is now a recorded, justified decision rather than a blind default.
+  Copier still needs `project_type` at generation, so assignment runs pre-copy
+  (the skill recommends it) and discovery confirms it post-copy.
+- Still open: conditional skill and loop shipping from `.copier-answers.yml` plus
+  VISION inference (today skills/loops ship unconditionally and route by
+  description at runtime).
 - The stage-3 feature-delivery orchestrator and roadmap-review loops, and the
   evaluator-optimizer loop.
 - Fleet-scale governance: versioned GATES and LOOPS schemas with a migration

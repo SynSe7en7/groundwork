@@ -1,6 +1,6 @@
 ---
 name: discovery
-description: Runs the post-install PM/CEO discovery session that turns a freshly scaffolded groundwork project into a ratified product direction. It interviews the owner across three rounds (Vision, Product, Selection) plus an optional Architect-lite round, asking 2-3 questions at a time and waiting, then writes CHARTER.md, VISION.md, docs/prd/, and the activated skills and loops index, flipping the matching gates in docs/GATES.md from not-started to open to ratified. Use when a project was just generated from groundwork and the gates are still not-started, or when the owner says "run discovery", "set the product vision", "kick off the charter", "what are we building", "onboard this project", or asks to fill in CHARTER.md / VISION.md / the PRD from a blank template.
+description: Runs the post-install PM/CEO discovery session that turns a freshly scaffolded groundwork project into a ratified product direction. It first confirms the assigned scaffold fits, then interviews the owner across three rounds (Vision, Product, Selection) plus an optional Architect-lite round, asking 2-3 questions at a time and waiting, then writes CHARTER.md, VISION.md, docs/prd/, and the activated skills and loops index, flipping the matching gates in docs/GATES.md from not-started to open to ratified. Use when a project was just generated from groundwork and the gates are still not-started, or when the owner says "run discovery", "set the product vision", "kick off the charter", "what are we building", "onboard this project", or asks to fill in CHARTER.md / VISION.md / the PRD from a blank template.
 ---
 
 # Discovery
@@ -58,9 +58,21 @@ This is the phase that makes or breaks the session. Hold it on every round.
 
 ## Rounds
 
-Default three rounds plus an optional fourth. Each round maps to exactly one gate
-in `docs/GATES.md`. Open the gate when the round starts, ratify it on the owner's
-read-back. Do not start a later round's gate early.
+A scaffold-confirmation round (Round 0) precedes three product rounds plus an
+optional fourth. Each product round maps to exactly one gate in `docs/GATES.md`.
+Open the gate when the round starts, ratify it on the owner's read-back. Do not
+start a later round's gate early.
+
+### Round 0: Scaffold (confirm and record)
+
+The scaffold was assigned before generation by the `scaffold-assignment` skill,
+or by whoever answered `project_type`. Confirm it still fits before building on
+it. Read `.copier-answers.yml` for the assigned `project_type`; if the owner's
+emerging requirements contradict it (they describe a native app but the project
+generated as `web`), flag the mismatch and point to the `scaffold-assignment`
+change path rather than proceeding on the wrong surface. When it fits, carry the
+one-line rationale into the `CHARTER.md` Constraints `Platform / scaffold` line in
+Round 1. This is a confirmation, not a gate of its own.
 
 ### Round 1: Vision
 
@@ -80,7 +92,8 @@ Pull these out, 2 to 3 questions at a time:
 
 When the round closes, set the Charter gate to open in `docs/GATES.md`, then
 write `CHARTER.md` (filling the existing template's thesis, who-and-the-job,
-success, constraints, non-goals, owner) and `VISION.md` (the longer-form
+success, constraints including the Round 0 Platform / scaffold rationale,
+non-goals, owner) and `VISION.md` (the longer-form
 narrative of the bet and the world it is betting on, where CHARTER.md is the
 compression). Read both back. On the owner's acceptance, set the gate to ratified
 and the artifact front-matter `status` to accepted.

@@ -23,7 +23,10 @@ This session executed the World-Class Roadmap from v0.3.0 to v0.9.0:
   `create-groundwork` wrapper, `just setup` + first-run, and the web Vercel deploy
   path. Plus the first tracked instance (`SynSe7en7/groundwork-example-web`).
 
-**The immediate next work**: short Phase 3 tail, then Phase 4 (demand-gated).
+**The immediate next work**: continue Phase 4. Started with discovery-driven
+scaffold assignment (the `scaffold-assignment` skill + discovery Round 0 + recorded
+rationale + change path). Plus the short Phase 3 tail (a live preview URL; the
+formal harvest round-trip).
 Phase 3 is essentially done — all six items shipped. The remaining tail is small:
 (1) deploy the example to a live preview URL with one `just deploy-preview` (needs
 the Vercel CLI authenticated) to fully close the "live URL in minutes" acceptance,
@@ -68,7 +71,8 @@ Versioning is **commit-driven via release-please**, not manual tags.
 - **Alignment gates** (`template/docs/GATES.md`): Charter (upfront); Stack/ADR,
   PRD/Plan, Clarify, Design, Deploy/Security (just-in-time). Now **CI-enforced** in
   generated projects (see below).
-- **Skills (4, under the 8-12 ceiling)**: `discovery`, `run-gate`, `harvest`
+- **Skills (5, under the 8-12 ceiling)**: `scaffold-assignment` (requirements ->
+  one scaffold, recorded, with a change path), `discovery`, `run-gate`, `harvest`
   (pull-up to the foundation), `analyze` (cross-artifact consistency). **Loops**:
   `tdd-red-green-refactor`, `plan-execute-verify`.
 
@@ -126,9 +130,13 @@ foundation `dependabot.yml` (github-actions). Generated projects also ship a
   `just deploy-preview` from the example to land a live URL (needs Vercel CLI auth)
   to fully close the "live URL in minutes" acceptance; (2) the formal harvest
   round-trip via the `harvest` skill + `HARVEST.md`.
-- **Phase 4 (demand-gated)**: shared-primitive factoring, a non-JS backend
-  scaffold, a scaffold/skill registry seam, discovery-driven scaffold assignment,
-  the orchestrator/roadmap loops. Earned by a second/third real project.
+- **Phase 4 (demand-gated), STARTED.** Discovery-driven scaffold assignment is
+  SHIPPED (the `scaffold-assignment` skill + discovery Round 0 + recorded rationale
+  + change path). Remaining: shared-primitive factoring with a CI contract
+  invariant, a scaffold/skill registry seam, conditional skill/loop shipping from
+  `.copier-answers.yml` + VISION inference, a non-JS backend scaffold (a NEW
+  scaffold type, gated by the two-real-instances rule), and the orchestrator/roadmap
+  loops. The rest stays demand-gated on a second/third real project.
 - **The harvest round-trip + the projects-on-latest metric: UNBLOCKED.** The
   second project generated from groundwork now exists and is tracked
   (`SynSe7en7/groundwork-example-web`, committed `.copier-answers.yml` pinned to

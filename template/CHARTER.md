@@ -35,7 +35,7 @@ Hard limits the work must respect. List the real ones for this project.
 - Compliance / regulatory: <e.g. SOC2, AB 1305, none>
 - Budget / infra cost ceiling: <e.g. pause the dev DB when idle>
 - Timeline / fixed dates: <e.g. launch window, freeze date>
-- Platform: <web / mobile / desktop / hybrid; default stack unless an ADR says otherwise>
+- Platform / scaffold: <web / mobile / desktop / hybrid / core>, assigned by the scaffold-assignment skill because <the one requirement that drove it>. A change is a recorded migration (see the scaffold-assignment skill). Default stack unless an ADR says otherwise.
 - Voice: no em-dashes or double hyphens, no emojis, no negation-setup phrasing.
 
 ## Owner / decision-maker
