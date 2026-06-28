@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/SynSe7en7/groundwork/compare/v0.10.0...v0.10.1) (2026-06-28)
+
+
+### Bug Fixes
+
+* **hybrid:** make the web app actually build (Tamagui+solito+Next 16) and lint ([#45](https://github.com/SynSe7en7/groundwork/issues/45)) ([490b136](https://github.com/SynSe7en7/groundwork/commit/490b1366ad9b58b6985e8f26840b2f8d5b37d5db))
+
 ## [0.10.0](https://github.com/SynSe7en7/groundwork/compare/v0.9.2...v0.10.0) (2026-06-28)
 
 
