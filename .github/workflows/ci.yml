@@ -81,9 +81,10 @@ jobs:
           npm ci
           npx tsc --noEmit
 
-  # Build gate: hybrid must install (pnpm) and typecheck across the workspace.
+  # Build gate: hybrid must install (pnpm), typecheck the workspace, and lint +
+  # build the web app (the Next surface; the native build is EAS, off CI).
   build-hybrid:
-    name: build hybrid (pnpm typecheck)
+    name: build hybrid (typecheck + web lint/build)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -96,12 +97,14 @@ jobs:
       - run: echo "OUT=$(mktemp -d)" >> "$GITHUB_ENV"
       # --trust runs the slug-substitution task so pnpm can resolve workspace links.
       - run: uvx copier copy --defaults --trust --vcs-ref HEAD --data project_type=hybrid --data project_name="CI Hybrid" . "$OUT"
-      - name: install + typecheck
+      - name: install + typecheck + web lint/build
         working-directory: ${{ env.OUT }}
         run: |
           set -euo pipefail
           pnpm install --frozen-lockfile
           pnpm -r run type-check
+          pnpm --filter web run lint
+          pnpm --filter web run build
 
   # Build gate: desktop frontend builds and typechecks, then the full Tauri build.
   build-desktop:

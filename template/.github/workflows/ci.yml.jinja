@@ -28,10 +28,12 @@ jobs:
         with:
           node-version: 20
       - run: corepack enable
-      - name: Install and type-check the pnpm workspace
+      - name: Install, type-check, and lint + build the web app
         run: |
           pnpm install --frozen-lockfile
           pnpm -r run type-check
+          pnpm --filter web run lint
+          pnpm --filter web run build
 [% else %]
     defaults:
       run:
