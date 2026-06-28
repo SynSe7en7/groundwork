@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/SynSe7en7/groundwork/compare/v0.9.2...v0.10.0) (2026-06-28)
+
+
+### Features
+
+* **skills:** scaffold-assignment skill + discovery-driven assignment ([#39](https://github.com/SynSe7en7/groundwork/issues/39)) ([6f75312](https://github.com/SynSe7en7/groundwork/commit/6f75312a5735a8a575a069352d3c3bdda20794e9))
+
 ## [0.9.2](https://github.com/SynSe7en7/groundwork/compare/v0.9.1...v0.9.2) (2026-06-27)
 
 
