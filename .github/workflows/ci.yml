@@ -130,7 +130,7 @@ jobs:
       # Cache the Rust target keyed on the committed Cargo.lock, so the Tauri build
       # (the CI long pole) reuses compiled crates across runs. Runs after render so
       # Cargo.lock exists for the cache key.
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@f0d9c3887740aee45f6153b24b3a6b815192ec16 # v2
         with:
           workspaces: ${{ runner.temp }}/ci-desktop/desktop/src-tauri -> target
       - name: install + frontend verify
